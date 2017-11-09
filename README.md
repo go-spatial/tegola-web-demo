@@ -10,16 +10,16 @@ The following is an example JSON configuration:
 
 ```json
 {
-"start":{
-	"zoom":15,
-	"longitude":-117.15117725013909,
-	"latitude":32.72269876352742,
-	"bearing":0,
-	"pitch":0,
-	"theme":"hot-osm",
-	"source":"ec2",
-	"renderer":"mapbox"
-},
+	"start":{
+		"zoom":15,
+		"longitude":-117.15117725013909,
+		"latitude":32.72269876352742,
+		"bearing":0,
+		"pitch":0,
+		"theme":"hot-osm",
+		"source":"ec2",
+		"renderer":"mapbox"
+	},
     "themes":[{
     	"key":"hot-osm",
     	"label":"HOT OSM",

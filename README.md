@@ -103,7 +103,7 @@ The `renderers` JSON configuration defines the Tegola renderers which will rende
 
 ## State (Query)
 
-The state of the map is stored in the URI of the web page to allow for sharing of links that will recreate the map. The query state parameters are defined below:
+The state of the map is stored in the URI to allow for sharing of links that will recreate the map. The query state parameters are defined below:
 
 - `zoom` - defines the zoom of the map based on the zoom levels in the Mapbox rendering library (Open Layers zoom value is one higher than Mapbox's for the same viewport)
 - `longitude` - defines the longitude value of the center of the map (web mercator 3857 projection)

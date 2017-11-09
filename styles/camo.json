@@ -18,11 +18,11 @@
   "sources": {
     "osm": {
       "type": "vector",
-      "url": "http://osm.tegola.io/capabilities/osm.json?debug=true"
+      "url": "https://osm.tegola.io/capabilities/osm.json"
     }
   },
-  "sprite": "http://demo.tegola.io/spritesets/Spritesheets",
-  "glyphs": "http://demo.tegola.io/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/Spritesheets",
+  "glyphs": "https://go-spatial.github.io/tegola-web-demo/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",

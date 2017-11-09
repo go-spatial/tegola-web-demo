@@ -18,7 +18,7 @@
   "sources": {
     "osm": {
       "type": "vector",
-      "url": "https://osm.tegola.io/capabilities/osm.json?debug=true"
+      "url": "https://osm.tegola.io/capabilities/osm.json"
     }
   },
   "glyphs": "https://go-spatial.github.io/tegola-web-demo/fonts/{fontstack}/{range}.pbf",

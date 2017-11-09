@@ -19,7 +19,7 @@
   "sources": { 
     "osm": {
       "type": "vector",
-      "url": "http://osm.tegola.io/capabilities/osm.json?debug=true"
+      "url": "https://osm.tegola.io/capabilities/osm.json?debug=true"
     }
   },
   "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/hot_osm_icons",

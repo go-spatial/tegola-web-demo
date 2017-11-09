@@ -48,8 +48,7 @@ The following is an example JSON configuration:
     "renderers":[{
     	"key":"mapbox",
     	"label":"Mapbox",
-    	"library":"mapbox",
-    	"accessToken":"pk.eyJ1IjoiamowaG5zMG4iLCJhIjoiY2o1YjRtMjZpMGd2MDJ3bW00bnA5NXdyMiJ9.qlR4a_qfTlKZs1Qisk6sAg"
+    	"library":"mapbox"
     },{
     	"key":"ol",
     	"label":"Open Layers",

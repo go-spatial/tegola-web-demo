@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Tegola Demo Viewer</title>
+
+		<script type="application/json" id="options">
+		    {
+		    	"start":{
+	    			"zoom":15,
+	    			"longitude":-117.15117725013909,
+	    			"latitude":32.72269876352742,
+	    			"bearing":0,
+	    			"pitch":0,
+		    		"theme":"hot-osm",
+		    		"source":"ec2",
+		    		"renderer":"mapbox"
+		    	},
+		        "themes":[{
+		        	"key":"hot-osm",
+		        	"label":"HOT OSM",
+		        	"tileSrc":"images/hot-osm.png",
+		        	"mapboxStyle":"styles/hot-osm3d.json",
+		        	"olStyle":"styles/hot-osm.json"
+		        },{
+		        	"key":"camo",
+		        	"label":"Camo",
+		        	"tileSrc":"images/camo.png",
+		        	"mapboxStyle":"styles/camo3d.json",
+		        	"olStyle":"styles/camo.json"
+		        },{
+		        	"key":"night-vision",
+		        	"label":"Night",
+		        	"tileSrc":"images/night-vision.png",
+		        	"mapboxStyle":"styles/night-vision3d.json",
+		        	"olStyle":"styles/night-vision.json"
+		        },{
+		        	"key":"mobility",
+		        	"label":"Mobility",
+		        	"tileSrc":"images/mobility.png",
+		        	"mapboxStyle":"styles/mobility3d.json",
+		        	"olStyle":"styles/mobility.json"
+		        },{
+		        	"key":"osgeo",
+		        	"label":"OSGeo",
+		        	"tileSrc":"images/osgeo.png",
+		        	"mapboxStyle":"styles/osgeo3d.json",
+		        	"olStyle":"styles/osgeo.json"
+		        }],
+		        "sources":[{
+		        	"key":"ec2",
+		        	"label":"EC2",
+		        	"url":"http://osm.tegola.io/capabilities/osm.json?debug=true",
+		        	"styleName":"osm"
+		        }],
+		        "renderers":[{
+		        	"key":"mapbox",
+		        	"label":"Mapbox",
+		        	"library":"mapbox",
+		        	"accessToken":"pk.eyJ1IjoiamowaG5zMG4iLCJhIjoiY2o1YjRtMjZpMGd2MDJ3bW00bnA5NXdyMiJ9.qlR4a_qfTlKZs1Qisk6sAg"
+		        },{
+		        	"key":"ol",
+		        	"label":"Open Layers",
+		        	"library":"ol"
+		        }]
+		    }
+		</script>
+		<style type="text/css">
+			*{margin:0;padding:0;box-sizing:border-box;vertical-align:middle;}
+
+			#olMap{width:100%;height:100%;position:relative;z-index:2;}
+			#mapboxMap{width:100%;height:100%;position:relative;z-index:1;}
+			#themebar{position:fixed;bottom:0;left:0;color:#333;margin:16px;
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				z-index:3;
+			}
+			#optionsbar{position:fixed;bottom:0;right:0;color:#333;margin:16px;
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				z-index:3;
+			}
+
+			.tool{font-family:'Open Sans',sans-serif;float:left;background-color:rgba(255,255,255,1);
+				border:1px solid #E9EDEF;position:relative;font-size:16px;
+				cursor:pointer;border-left:none;}
+			.tool:first-child{border-left:1px solid #E9EDEF;border-top-left-radius:4px;border-bottom-left-radius:4px;}
+			.tool:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px;}
+			.tool:hover{background-color:#D9EAFB;border-color:#BBCEE3;}
+			.tool.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
+			
+			.tool .tile{width:38px;height:38px;line-height:36px;border-radius:2px;
+				position:relative;margin:3px;display:inline-block;
+				border:1px solid rgba(255,255,255,0.3);opacity:0.85;}
+			.tool:hover .tile{opacity:1;}
+			.tool.active .tile{opacity:1;}
+			.tool .label{line-height:40px;height:40px;
+				margin:2px 14px 2px 12px;display:inline-block;}
+			.tool .label i{position:relative;top:0;margin-right:3px;}
+			
+			.drop-up{position:absolute;bottom:48px;right:-1px;
+				list-style-type:none;margin:0;padding:0;}
+			.drop-up li{display:block;position:relative;margin:0;padding:0;border-top:1px solid #E9EDEF;
+				border-left:1px solid #E9EDEF;border-right:1px solid #E9EDEF;background-color:#fff;
+				min-width:160px;overflow:hidden;}
+			.drop-up li:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}
+			.drop-up li:last-child{border-bottom:1px solid #E9EDEF;
+				border-bottom-left-radius:4px;border-bottom-right-radius:0;}
+			.drop-up li:hover{background-color:#D9EAFB;border-color:#BBCEE3;}
+			.drop-up li.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
+			.drop-up li .tile{position:absolute;margin:2px;}
+			.drop-up li .label{line-height:44px;margin:2px 14px 2px 12px;}
+
+			.display-none{display:none;}
+
+			@media only screen and (max-width:1000px) {
+				#themebar .label{display:none;}
+			}
+		</style>
+
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans"/>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.4.2/ol.css">
+		<link rel="stylesheet" type="text/css" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.css"/>
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+	<body>
+		<div id="mapContainer">
+			<div id="mapboxMap" class="display-none"></div>
+			<div id="olMap" class="display-none"></div>
+			<div id="themebar" class="display-none"></div>
+			<div id="optionsbar">
+			</div>
+			<div id="rendereroption" class="tool display-none" onclick="clickToggle('rendererbar');">
+				<div class="label">
+					<i class="fa fa-cubes" aria-hidden="true"></i> 
+					<span id="rendererLabel"></span>
+				</div>
+				<ul id="rendererbar" class="drop-up display-none">
+				</ul>
+			</div>
+			<div id="sourceoption" class="tool display-none" onclick="clickToggle('sourcebar');">
+				<div class="label">
+					<i class="fa fa-server" aria-hidden="true"></i> 
+					<span id="sourceLabel"></span>
+				</div>
+				<ul id="sourcebar" class="drop-up display-none">
+				</ul>
+			</div>
+		</div>
+	</body>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.4.2/ol.js"></script>
+	<script src="js/olms.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.css' rel='stylesheet' />
+	<!--script src='js/main.js'></script-->
+	<script type="text/javascript">
+		'use strict';
+
+		(()=>{
+			try{
+				var options = JSON.parse(document.getElementById('options').innerHTML);
+			}catch(e){
+				return console.error('error parsing options JSON:',e);
+			}
+			console.log('options:',options);
+
+			//check for required options
+			if (!options.start) return console.error('options: no start defined');
+			if (!options.themes) return console.error('options: no themes defined');
+			if (!options.sources) return console.error('options: no sources defined');
+			if (!options.renderers) return console.error('options: no renderers defined');
+
+			var themes = {}, sources = {}, renderers = {},
+				currentState = {};
+
+			// getState pulls the app state from the query first, then the start configs
+			var getState = function(){
+				var query = parseQuery();
+				query.zoom = +query.zoom || options.start.zoom;
+				query.latitude = +query.latitude || options.start.latitude;
+				query.longitude = +query.longitude || options.start.longitude;
+				query.bearing = +query.bearing || options.start.bearing;
+				query.pitch = +query.pitch || options.start.pitch;
+				query.theme = query.theme || options.start.theme;
+				query.source = query.source || options.start.source;
+				query.renderer = query.renderer || options.start.renderer;
+				return query;
+			};
+			var setState = function(state){
+				var query = makeQuery(state);
+				window.history.pushState(undefined,'posUpdate',query);
+			};
+			var parseQuery = function(){
+				var url = window.location.href,
+					query = {},
+					qInd = url.indexOf('?');
+				if (qInd === -1) return query;
+				var props = url.slice(qInd+1).split('&');
+			    for(var i=0,len=props.length;i<len;i++){
+			        var prop = props[i].split('=');
+			        query[prop[0]] = decodeURIComponent(prop[1]);
+			    }
+			    return query;
+			};
+			var makeQuery = function(state){
+				var parts = [];
+				for (var i in state){
+					parts.push(i+'='+encodeURIComponent(state[i]));
+				}
+				if (parts.length < 1) return '';
+			    return '?'+parts.join('&');
+			};
+			var elFromStr = function(str){
+				var div = document.createElement('div');
+				div.innerHTML = str;
+				return div.firstChild;
+			};
+			var getType = function(d){
+				if (d === undefined) return 'und';
+				if (d === null) return 'null';
+				if (d === true || d === false) return 'bool';
+				var t = typeof d;
+				if (t == 'string') return 'str';
+				if (t == 'number') return 'num';
+				if (t == 'function') return 'fun';
+				if (Object.prototype.toString.call(d) == '[object Array]') return 'ary';
+				return 'obj';
+			};
+			var clone = function(obj){
+				if (arguments.length == 0) obj = this;
+				if (getType(obj) !== 'obj') return console.error('clone: argument must be type object');
+				var obj2 = {};
+				for (var i in obj){
+					if (getType(obj[i]) == 'obj'){
+						obj2[i] = clone(obj[i]);
+						continue;
+					}
+					if (getType(obj[i]) == 'ary'){
+						obj2[i] = [];
+						obj[i].forEach((val)=>{
+							obj2[i].push(val);
+						});
+						continue;
+					}
+					obj2[i] = obj[i];
+				}
+				return obj2;
+			};
+			var setTheme = function(key){
+				var theme = themes[key];
+				if (!theme) return console.error('theme:',key,' not found');
+				for (var i in themes){
+					themes[i].el.className = themes[i].el.className.replace(' active','');
+				}
+				theme.el.className = theme.el.className+' active';
+				currentState.theme = key;
+			};
+			var setSource = function(key){
+				var source = sources[key];
+				if (!source) return console.error('source:',key,' not found');
+				for (var i in sources){
+					sources[i].el.className = sources[i].el.className.replace(' active','');
+				}
+				source.el.className = source.el.className+' active';
+				document.getElementById('sourceLabel').innerHTML = source.label;
+				currentState.source = key;
+			};
+			var setRenderer = function(key){
+				var renderer = renderers[key];
+				if (!renderer) return console.error('renderer:',key,' not found');
+				for (var i in renderers){
+					renderers[i].el.className = renderers[i].el.className.replace(' active','');
+				}
+				renderer.el.className = renderer.el.className+' active';
+				document.getElementById('rendererLabel').innerHTML = renderer.label;
+				if (currentState.renderer && currentState.renderer != key){
+					renderers[currentState.renderer].client.clear();
+				}
+				currentState.renderer = key;
+			};
+			var updateMap = function(){
+				if (!currentState.renderer) return console.error('no renderer defined');
+				var renderer = renderers[currentState.renderer];
+				renderer.client.render();
+			};
+			var loadJsonFile = function(url,loaded){
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url);
+				var a = document.createElement('A');
+				a.href = url;
+				xhr.addEventListener('load',()=>{
+					try{
+						//console.log('response:',xhr.responseText);
+						var json = JSON.parse(xhr.responseText);
+					} catch(e){
+						return console.error('error parsing json from file:',url,e);
+					}
+					loaded(json);
+				});
+				xhr.addEventListener('error', function () {
+					console.error('error loading file:',url);
+				});
+				xhr.send();
+			};
+
+			window.clickSetTheme = function(key){
+				setTheme(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetSource = function(key){
+				setSource(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetRenderer = function(key){
+				setRenderer(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickToggle = function(id){
+				var toggle = document.getElementById(id);
+				if (toggle.style.display == 'block'){
+					toggle.style.display = 'none';
+				} else {
+					toggle.style.display = 'block';
+				}
+			};
+
+			options.themes.forEach((config,ind)=>{
+				var theme = clone(config);
+
+				var html = '<div class="tool" onclick="clickSetTheme(\''+theme.key+'\');">';
+				html += '<div class="tile" style="background:url('+theme.tileSrc+');"></div>';
+				html += '<div class="label">'+theme.label+'</div>';
+				html += '</div>';
+
+				theme.el = elFromStr(html);
+				document.getElementById('themebar').appendChild(theme.el);
+				themes[theme.key] = theme;
+			});
+			if (options.themes.length > 1) document.getElementById('themebar').style.display = 'block';
+
+			options.sources.forEach((config,ind)=>{
+				var source = clone(config);
+
+				var html = '<li onclick="clickSetSource(\''+source.key+'\');">';
+				html += '<div class="label">'+source.label+'</div>';
+				html += '</li>';
+
+				source.el = elFromStr(html);
+				document.getElementById('sourcebar').appendChild(source.el);
+				sources[source.key] = source;
+			});
+			if (options.sources.length > 1){
+				var sourceOption = document.getElementById('sourceoption');
+				sourceOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(sourceOption);
+			}
+
+			options.renderers.forEach((config,ind)=>{
+				var renderer = clone(config);
+
+				var html = '<li onclick="clickSetRenderer(\''+renderer.key+'\');">';
+				html += '<div class="label"> '+renderer.label+'</div>';
+				html += '</li>';
+
+				renderer.el = elFromStr(html);
+				document.getElementById('rendererbar').appendChild(renderer.el);
+				renderers[renderer.key] = renderer;
+			});
+			if (options.renderers.length > 1){
+				var rendererOption = document.getElementById('rendereroption');
+				rendererOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(rendererOption);
+			}
+
+			var mapboxClient = {
+				render:function(){
+					document.getElementById('mapboxMap').style.display = 'block';
+
+					var theme = themes[currentState.theme];
+					var renderer = renderers[currentState.renderer];
+					var source = sources[currentState.source];
+					var center = [currentState.longitude,currentState.latitude];
+
+					if (renderer.accessToken) mapboxgl.accessToken = renderer.accessToken;
+
+					loadJsonFile(theme.mapboxStyle,(style)=>{
+						style.sources = {};
+						style.sources[source.styleName] = {
+							url:source.url,
+							type:'vector'
+						};
+
+						//console.log('center:',center,style);
+
+						if (!this.map){
+		  					this.map = new mapboxgl.Map({
+								container:'mapboxMap',
+								style:style,
+								//style:'mapbox://styles/mapbox/streets-v9',
+								center:center,
+								bearing:currentState.bearing,
+								pitch:currentState.pitch,
+								zoom:currentState.zoom
+							});
+							this.map.on('render',()=>{
+								var center = this.map.getCenter();
+								currentState.longitude = center.lng;
+								currentState.latitude = center.lat;
+								currentState.zoom = this.map.getZoom();
+								currentState.pitch = this.map.getPitch();
+								currentState.bearing = this.map.getBearing();
+								setState(currentState);
+							});
+							this.map.addControl(new mapboxgl.NavigationControl());
+							return;
+						}
+
+						var changed = false;
+						for (var i in currentState){
+							if (currentState[i] !== this[i]){
+								changed = true;
+								break;
+							}
+						}
+						if (!changed) return;
+						for (var i in currentState){
+							this[i] = currentState[i];
+						}
+
+						this.map.setStyle(style);
+						this.map.setCenter(center);
+						this.map.setZoom(this.zoom);
+						this.map.setBearing(this.bearing);
+						this.map.setPitch(this.pitch);
+					});	
+				},
+				clear:function(){
+					document.getElementById('mapboxMap').style.display = 'none';
+				}
+			};
+			renderers['mapbox'].client = mapboxClient;
+
+			var olClient = {
+				render:function(){
+					document.getElementById('olMap').style.display = 'block';
+
+					var theme = themes[currentState.theme];
+					var center = ol.proj.fromLonLat([currentState.longitude,currentState.latitude]);
+					var source = sources[currentState.source];
+
+					if (!this.map){
+						this.map = new ol.Map({
+							layers:[
+								new ol.layer.Vector({
+									source:new ol.source.Vector({
+										url:source.url,
+										format: new ol.format.GeoJSON()
+									})
+								})
+							],
+							target:'olMap'
+						});
+						this.view = this.map.getView();
+
+						//console.log('zoom:',currentState.zoom+1,center);
+
+						this.view.setZoom(currentState.zoom+1);
+						this.view.setCenter(center);
+						olms.apply(this.map,theme.olStyle);
+
+						return;		
+					}
+					var changed = false;
+					for (var i in currentState){
+						if (currentState[i] !== this[i]){
+							changed = true;
+							break;
+						}
+					}
+					if (!changed) return;
+					//console.log('theme:',theme);
+					olms.apply(this.map,theme.olStyle);
+					this.map.getLayers().getArray().forEach((layer)=>{
+						this.map.removeLayer(layer);
+					});
+					var layer = new ol.layer.Vector({
+						source:new ol.source.Vector({
+							url:source.url,
+							format:new ol.format.GeoJSON()
+						})
+					});
+					this.map.addLayer(layer);
+					this.view.setZoom(currentState.zoom+1);
+					this.view.setCenter(center);
+
+					for (var i in currentState){
+						this[i] = currentState[i];
+					}
+				},
+				clear:function(){
+					document.getElementById('olMap').style.display = 'none';
+				}
+			};
+			renderers['ol'].client = olClient;
+
+			currentState = getState();
+
+			document.getElementById('mapboxMap').style.height = window.innerHeight+'px';
+			document.getElementById('olMap').style.height = window.innerHeight+'px';
+
+			setTheme(currentState.theme);
+			setSource(currentState.source);
+			setRenderer(currentState.renderer);
+			updateMap();
+
+		})();
+
+	</script>
+	
+</html>
+

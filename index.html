@@ -473,7 +473,6 @@
 						this.view = this.map.getView();
 
 						//console.log('zoom:',currentState.zoom+1,center);
-
 						this.view.setZoom(currentState.zoom+1);
 						this.view.setCenter(center);
 						olms.apply(this.map,theme.olStyle);
@@ -490,16 +489,19 @@
 					if (!changed) return;
 					//console.log('theme:',theme);
 					olms.apply(this.map,theme.olStyle);
-					this.map.getLayers().getArray().forEach((layer)=>{
-						this.map.removeLayer(layer);
-					});
-					var layer = new ol.layer.Vector({
-						source:new ol.source.Vector({
-							url:source.url,
-							format:new ol.format.GeoJSON()
-						})
-					});
-					this.map.addLayer(layer);
+
+					if (currentState.source !== this.source){
+						this.map.getLayers().getArray().forEach((layer)=>{
+							this.map.removeLayer(layer);
+						});
+						var layer = new ol.layer.Vector({
+							source:new ol.source.Vector({
+								url:source.url,
+								format:new ol.format.GeoJSON()
+							})
+						});
+						this.map.addLayer(layer);
+					}
 					this.view.setZoom(currentState.zoom+1);
 					this.view.setCenter(center);
 

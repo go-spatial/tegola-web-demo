@@ -488,12 +488,12 @@
 					}
 					if (!changed) return;
 					//console.log('theme:',theme);
+					this.map.getLayers().getArray().forEach((layer)=>{
+						this.map.removeLayer(layer);
+					});
 					olms.apply(this.map,theme.olStyle);
 
 					if (currentState.source !== this.source){
-						this.map.getLayers().getArray().forEach((layer)=>{
-							this.map.removeLayer(layer);
-						});
 						var layer = new ol.layer.Vector({
 							source:new ol.source.Vector({
 								url:source.url,
@@ -502,8 +502,13 @@
 						});
 						this.map.addLayer(layer);
 					}
-					this.view.setZoom(currentState.zoom+1);
-					this.view.setCenter(center);
+					if (currentState.zoom !== this.zoom){
+						this.view.setZoom(currentState.zoom+1);
+					}
+					if (currentState.longitude !== this.longitude || 
+						currentState.latitude !== this.latitude){
+						this.view.setCenter(center);
+					}
 
 					for (var i in currentState){
 						this[i] = currentState[i];

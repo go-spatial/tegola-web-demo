@@ -42,7 +42,7 @@ The following is an example JSON configuration:
     "sources":[{
     	"key":"ec2",
     	"label":"EC2",
-    	"url":"://osm.tegola.io/capabilities/osm.json?debug=true",
+    	"url":"https://osm.tegola.io/capabilities/osm.json?debug=true",
     	"styleName":"osm"
     }],
     "renderers":[{

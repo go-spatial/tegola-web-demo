@@ -21,7 +21,7 @@
       "url": "https://osm.tegola.io/capabilities/osm.json"
     }
   },
-  "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/Spritesheets",
+  "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/osm_tegola_spritesheet",
   "glyphs": "https://go-spatial.github.io/tegola-web-demo/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {

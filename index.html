@@ -12,11 +12,11 @@
 	    			"latitude":32.72269876352742,
 	    			"bearing":0,
 	    			"pitch":0,
-		    		"theme":"hot-osm",
-		    		"source":"ec2",
-		    		"renderer":"mapbox"
+		    		"style":"hot-osm",
+		    		"map":"ec2",
+		    		"lib":"mapbox"
 		    	},
-		        "themes":[{
+		        "styles":[{
 		        	"key":"hot-osm",
 		        	"label":"HOT OSM",
 		        	"tileSrc":"images/hot-osm.png",
@@ -47,13 +47,24 @@
 		        	"mapboxStyle":"styles/osgeo3d.json",
 		        	"olStyle":"styles/osgeo.json"
 		        }],
-		        "sources":[{
+		        "maps":[{
 		        	"key":"ec2",
 		        	"label":"EC2",
+		        	"sources":{
+	        			"osm":{
+	        				"url":"https://osm.tegola.io/capabilities/osm.json",
+	        				"type":"vector"
+	        			},
+	        			"satellite":{
+	        				"url":"http://osm.tegola.io/{z}/{x}/{y}",
+	        				"type":"raster",
+	        				"attribution":"© DigitalGlobe, Inc"
+	        			}
+	        		},
 		        	"url":"https://osm.tegola.io/capabilities/osm.json",
 		        	"styleName":"osm"
 		        }],
-		        "renderers":[{
+		        "libs":[{
 		        	"key":"mapbox",
 		        	"label":"Mapbox",
 		        	"library":"mapbox",
@@ -77,7 +88,7 @@
 
 			#olMap{width:100%;height:100%;position:relative;z-index:2;}
 			#mapboxMap{width:100%;height:100%;position:relative;z-index:1;}
-			#themebar{position:fixed;bottom:0;left:0;color:#333;margin:16px;
+			#stylebar{position:fixed;bottom:0;left:0;color:#333;margin:16px;
 				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
 				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
 				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
@@ -123,7 +134,7 @@
 			.display-none{display:none;}
 
 			@media only screen and (max-width:1000px) {
-				#themebar .label{display:none;}
+				#stylebar .label{display:none;}
 			}
 		</style>
 
@@ -136,23 +147,23 @@
 		<div id="mapContainer">
 			<div id="mapboxMap" class="display-none"></div>
 			<div id="olMap" class="display-none"></div>
-			<div id="themebar" class="display-none"></div>
+			<div id="stylebar" class="display-none"></div>
 			<div id="optionsbar">
 			</div>
-			<div id="rendereroption" class="tool display-none" onclick="clickToggle('rendererbar');">
+			<div id="liboption" class="tool display-none" onclick="clickToggle('libbar');">
 				<div class="label">
 					<i class="fa fa-cubes" aria-hidden="true"></i> 
-					<span id="rendererLabel"></span>
+					<span id="libLabel"></span>
 				</div>
-				<ul id="rendererbar" class="drop-up display-none">
+				<ul id="libbar" class="drop-up display-none">
 				</ul>
 			</div>
-			<div id="sourceoption" class="tool display-none" onclick="clickToggle('sourcebar');">
+			<div id="mapoption" class="tool display-none" onclick="clickToggle('mapbar');">
 				<div class="label">
 					<i class="fa fa-server" aria-hidden="true"></i> 
-					<span id="sourceLabel"></span>
+					<span id="mapLabel"></span>
 				</div>
-				<ul id="sourcebar" class="drop-up display-none">
+				<ul id="mapbar" class="drop-up display-none">
 				</ul>
 			</div>
 		</div>
@@ -173,24 +184,34 @@
 
 			//check for required options
 			if (!options.start) return console.error('options: no start defined');
-			if (!options.themes) return console.error('options: no themes defined');
-			if (!options.sources) return console.error('options: no sources defined');
-			if (!options.renderers) return console.error('options: no renderers defined');
+			if (!options.styles) return console.error('options: no styles defined');
+			if (!options.maps) return console.error('options: no maps defined');
+			if (!options.libs) return console.error('options: no libs defined');
 
-			var themes = {}, sources = {}, renderers = {},
+			var styles = {}, maps = {}, libs = {},
 				currentState = {};
 
 			// getState pulls the app state from the query first, then the start configs
 			var getState = function(){
 				var query = parseQuery();
+
+				/*
+				// query mapping old => new
+
+				theme -> style
+				source -> map
+				renderer -> lib
+				*/
+
+
 				query.zoom = +query.zoom || options.start.zoom;
 				query.latitude = +query.latitude || options.start.latitude;
 				query.longitude = +query.longitude || options.start.longitude;
 				query.bearing = +query.bearing || options.start.bearing;
 				query.pitch = +query.pitch || options.start.pitch;
-				query.theme = query.theme || options.start.theme;
-				query.source = query.source || options.start.source;
-				query.renderer = query.renderer || options.start.renderer;
+				query.style = query.style || options.start.style;
+				query.map = query.map || options.start.map;
+				query.lib = query.lib || options.start.lib;
 				return query;
 			};
 			var setState = function(state){
@@ -254,41 +275,41 @@
 				return obj2;
 			};
 			var setTheme = function(key){
-				var theme = themes[key];
-				if (!theme) return console.error('theme:',key,' not found');
-				for (var i in themes){
-					themes[i].el.className = themes[i].el.className.replace(' active','');
+				var style = styles[key];
+				if (!style) return console.error('style:',key,' not found');
+				for (var i in styles){
+					styles[i].el.className = styles[i].el.className.replace(' active','');
 				}
-				theme.el.className = theme.el.className+' active';
-				currentState.theme = key;
+				style.el.className = style.el.className+' active';
+				currentState.style = key;
 			};
-			var setSource = function(key){
-				var source = sources[key];
-				if (!source) return console.error('source:',key,' not found');
-				for (var i in sources){
-					sources[i].el.className = sources[i].el.className.replace(' active','');
+			var setMap = function(key){
+				var map = maps[key];
+				if (!map) return console.error('map:',key,' not found');
+				for (var i in maps){
+					maps[i].el.className = maps[i].el.className.replace(' active','');
 				}
-				source.el.className = source.el.className+' active';
-				document.getElementById('sourceLabel').innerHTML = source.label;
-				currentState.source = key;
+				map.el.className = map.el.className+' active';
+				document.getElementById('mapLabel').innerHTML = map.label;
+				currentState.map = key;
 			};
 			var setRenderer = function(key){
-				var renderer = renderers[key];
-				if (!renderer) return console.error('renderer:',key,' not found');
-				for (var i in renderers){
-					renderers[i].el.className = renderers[i].el.className.replace(' active','');
+				var lib = libs[key];
+				if (!lib) return console.error('lib:',key,' not found');
+				for (var i in libs){
+					libs[i].el.className = libs[i].el.className.replace(' active','');
 				}
-				renderer.el.className = renderer.el.className+' active';
-				document.getElementById('rendererLabel').innerHTML = renderer.label;
-				if (currentState.renderer && currentState.renderer != key){
-					renderers[currentState.renderer].client.clear();
+				lib.el.className = lib.el.className+' active';
+				document.getElementById('libLabel').innerHTML = lib.label;
+				if (currentState.lib && currentState.lib != key){
+					libs[currentState.lib].client.clear();
 				}
-				currentState.renderer = key;
+				currentState.lib = key;
 			};
 			var updateMap = function(){
-				if (!currentState.renderer) return console.error('no renderer defined');
-				var renderer = renderers[currentState.renderer];
-				renderer.client.render();
+				if (!currentState.lib) return console.error('no lib defined');
+				var lib = libs[currentState.lib];
+				lib.client.render();
 			};
 			var loadJsonFile = function(url,loaded){
 				var xhr = new XMLHttpRequest();
@@ -316,7 +337,7 @@
 				updateMap();
 			};
 			window.clickSetSource = function(key){
-				setSource(key);
+				setMap(key);
 				setState(currentState);
 				updateMap();
 			};
@@ -334,94 +355,98 @@
 				}
 			};
 
-			options.themes.forEach((config,ind)=>{
-				var theme = clone(config);
+			options.styles.forEach((config,ind)=>{
+				var style = clone(config);
 
-				var html = '<div class="tool" onclick="clickSetTheme(\''+theme.key+'\');">';
-				html += '<div class="tile" style="background:url('+theme.tileSrc+');"></div>';
-				html += '<div class="label">'+theme.label+'</div>';
+				var html = '<div class="tool" onclick="clickSetTheme(\''+style.key+'\');">';
+				html += '<div class="tile" style="background:url('+style.tileSrc+');"></div>';
+				html += '<div class="label">'+style.label+'</div>';
 				html += '</div>';
 
-				theme.el = elFromStr(html);
-				document.getElementById('themebar').appendChild(theme.el);
-				themes[theme.key] = theme;
+				style.el = elFromStr(html);
+				document.getElementById('stylebar').appendChild(style.el);
+				styles[style.key] = style;
 			});
-			if (options.themes.length > 1) document.getElementById('themebar').style.display = 'block';
+			if (options.styles.length > 1) document.getElementById('stylebar').style.display = 'block';
 
-			options.sources.forEach((config,ind)=>{
-				var source = clone(config);
+			options.maps.forEach((config,ind)=>{
+				var map = clone(config);
 
-				var html = '<li onclick="clickSetSource(\''+source.key+'\');">';
-				html += '<div class="label">'+source.label+'</div>';
+				var html = '<li onclick="clickSetSource(\''+map.key+'\');">';
+				html += '<div class="label">'+map.label+'</div>';
 				html += '</li>';
 
-				source.el = elFromStr(html);
-				document.getElementById('sourcebar').appendChild(source.el);
-				sources[source.key] = source;
+				map.el = elFromStr(html);
+				document.getElementById('mapbar').appendChild(map.el);
+				maps[map.key] = map;
 			});
-			if (options.sources.length > 1){
-				var sourceOption = document.getElementById('sourceoption');
-				sourceOption.style.display = 'block';
-				document.getElementById('optionsbar').appendChild(sourceOption);
+			if (options.maps.length > 1){
+				var mapOption = document.getElementById('mapoption');
+				mapOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(mapOption);
 			}
 
-			options.renderers.forEach((config,ind)=>{
-				var renderer = clone(config);
+			options.libs.forEach((config,ind)=>{
+				var lib = clone(config);
 
-				var html = '<li onclick="clickSetRenderer(\''+renderer.key+'\');">';
-				html += '<div class="label"> '+renderer.label+'</div>';
+				var html = '<li onclick="clickSetRenderer(\''+lib.key+'\');">';
+				html += '<div class="label"> '+lib.label+'</div>';
 				html += '</li>';
 
-				renderer.el = elFromStr(html);
-				document.getElementById('rendererbar').appendChild(renderer.el);
-				renderers[renderer.key] = renderer;
+				lib.el = elFromStr(html);
+				document.getElementById('libbar').appendChild(lib.el);
+				libs[lib.key] = lib;
 			});
-			if (options.renderers.length > 1){
-				var rendererOption = document.getElementById('rendereroption');
-				rendererOption.style.display = 'block';
-				document.getElementById('optionsbar').appendChild(rendererOption);
+			if (options.libs.length > 1){
+				var libOption = document.getElementById('liboption');
+				libOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(libOption);
 			}
 
 			var mapboxClient = {
 				render:function(){
 					document.getElementById('mapboxMap').style.display = 'block';
 
-					var theme = themes[currentState.theme];
-					var renderer = renderers[currentState.renderer];
-					var source = sources[currentState.source];
+					var style = styles[currentState.style];
+					var lib = libs[currentState.lib];
+					var map = maps[currentState.map];
 					var center = [currentState.longitude,currentState.latitude];
 
-					if (renderer.accessToken) mapboxgl.accessToken = renderer.accessToken;
+					if (lib.accessToken) mapboxgl.accessToken = lib.accessToken;
 
-					loadJsonFile(theme.mapboxStyle,(style)=>{
-						style.sources = {};
-						style.sources[source.styleName] = {
-							url:source.url,
-							type:'vector'
-						};
+					loadJsonFile(style.mapboxStyle,(styleJson)=>{
+						var styleSources = {};
+						for (var i in styleJson.sources){
+							if (map.sources[i]){ // source is defined in map
+								styleSources[i] = clone(styleJson.sources[i]);
+								for (var j in map.sources[i]){ // overwrite style sources with map source settings
+									styleSources[i][j] = map.sources[i][j];
+								}
+							}
+						}
+						styleJson.sources = styleSources;
 
 						//console.log('center:',center,style);
 
-						if (!this.map){
-		  					this.map = new mapboxgl.Map({
+						if (!this.el){
+		  					this.el = new mapboxgl.Map({
 								container:'mapboxMap',
-								style:style,
-								//style:'mapbox://styles/mapbox/streets-v9',
+								style:styleJson,
 								center:center,
 								bearing:currentState.bearing,
 								pitch:currentState.pitch,
 								zoom:currentState.zoom
 							});
-							this.map.on('render',()=>{
-								var center = this.map.getCenter();
+							this.el.on('render',()=>{
+								var center = this.el.getCenter();
 								currentState.longitude = center.lng;
 								currentState.latitude = center.lat;
-								currentState.zoom = this.map.getZoom();
-								currentState.pitch = this.map.getPitch();
-								currentState.bearing = this.map.getBearing();
+								currentState.zoom = this.el.getZoom();
+								currentState.pitch = this.el.getPitch();
+								currentState.bearing = this.el.getBearing();
 								setState(currentState);
 							});
-							this.map.addControl(new mapboxgl.NavigationControl());
+							this.el.addControl(new mapboxgl.NavigationControl());
 							return;
 						}
 
@@ -437,26 +462,67 @@
 							this[i] = currentState[i];
 						}
 
-						this.map.setStyle(style);
-						this.map.setCenter(center);
-						this.map.setZoom(this.zoom);
-						this.map.setBearing(this.bearing);
-						this.map.setPitch(this.pitch);
+						this.el.setStyle(styleJson);
+						this.el.setCenter(center);
+						this.el.setZoom(this.zoom);
+						this.el.setBearing(this.bearing);
+						this.el.setPitch(this.pitch);
 					});	
 				},
 				clear:function(){
 					document.getElementById('mapboxMap').style.display = 'none';
 				}
 			};
-			renderers['mapbox'].client = mapboxClient;
+			libs['mapbox'].client = mapboxClient;
 
 			var olClient = {
 				render:function(){
 					document.getElementById('olMap').style.display = 'block';
 
-					var theme = themes[currentState.theme];
+					var style = styles[currentState.style];
 					var center = ol.proj.fromLonLat([currentState.longitude,currentState.latitude]);
-					var source = sources[currentState.source];
+					var map = maps[currentState.map];
+
+					this.el = this.el || new ol.Map({target:'olMap'});
+					this.view = this.view || this.el.getView();
+
+					// apply styles
+					if (this.style != currentState.style){
+						olms.apply(this.el,style.olStyle);
+					}
+
+					// if source changed blitz layers and rebuild
+					if (this.map != currentState.map){
+						this.el.getLayers().getArray().forEach((layer)=>{
+							this.el.removeLayer(layer);
+						});
+						for (var i in map.sources){
+							var source = map.sources[i];
+							if (source.type == 'vector'){
+								var format = new ol.format.GeoJSON();
+							}
+							var layer = new ol.layer.Vector({
+								source:new ol.source.Vector({
+									url:source.url,
+									format:format
+								})
+							});
+							this.el.addLayer(layer);
+						}
+					}
+					if (currentState.zoom !== this.zoom){
+						this.view.setZoom(currentState.zoom+1);
+					}
+					if (currentState.longitude !== this.longitude || 
+						currentState.latitude !== this.latitude){
+						this.view.setCenter(center);
+					}
+
+					for (var i in currentState){
+						this[i] = currentState[i];
+					}
+
+					/*
 
 					if (!this.map){
 						this.map = new ol.Map({
@@ -475,7 +541,7 @@
 						//console.log('zoom:',currentState.zoom+1,center);
 						this.view.setZoom(currentState.zoom+1);
 						this.view.setCenter(center);
-						olms.apply(this.map,theme.olStyle);
+						olms.apply(this.map,style.olStyle);
 
 						return;		
 					}
@@ -487,11 +553,11 @@
 						}
 					}
 					if (!changed) return;
-					//console.log('theme:',theme);
+					//console.log('style:',style);
 					this.map.getLayers().getArray().forEach((layer)=>{
 						this.map.removeLayer(layer);
 					});
-					olms.apply(this.map,theme.olStyle);
+					olms.apply(this.map,style.olStyle);
 
 					if (currentState.source !== this.source){
 						var layer = new ol.layer.Vector({
@@ -510,24 +576,26 @@
 						this.view.setCenter(center);
 					}
 
+					
+
 					for (var i in currentState){
 						this[i] = currentState[i];
-					}
+					}*/
 				},
 				clear:function(){
 					document.getElementById('olMap').style.display = 'none';
 				}
 			};
-			renderers['ol'].client = olClient;
+			libs['ol'].client = olClient;
 
 			currentState = getState();
 
 			document.getElementById('mapboxMap').style.height = window.innerHeight+'px';
 			document.getElementById('olMap').style.height = window.innerHeight+'px';
 
-			setTheme(currentState.theme);
-			setSource(currentState.source);
-			setRenderer(currentState.renderer);
+			setTheme(currentState.style);
+			setMap(currentState.map);
+			setRenderer(currentState.lib);
 			updateMap();
 
 		})();

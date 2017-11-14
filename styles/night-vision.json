@@ -24,8 +24,8 @@
       "type": "raster"
     }
   },
-  "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/osm_tegola_spritesheet",
-  "glyphs": "https://go-spatial.github.io/tegola-web-demo/fonts/{fontstack}/{range}.pbf",
+  "sprite": "http://demo.tegola.io/spritesets/osm_tegola_spritesheet",
+  "glyphs": "http://demo.tegola.io/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",

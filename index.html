@@ -22,15 +22,15 @@
 			#olMap{width:100%;height:100%;position:relative;z-index:2;}
 			#mapboxMap{width:100%;height:100%;position:relative;z-index:1;}
 			#stylebar{position:fixed;bottom:0;left:0;color:#333;margin:16px;
-				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
-				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
-				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
 				z-index:3;
 			}
 			#optionsbar{position:fixed;bottom:0;right:0;color:#333;margin:16px;
-				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
-				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
-				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.6);
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
 				z-index:3;
 			}
 
@@ -39,7 +39,7 @@
 				cursor:pointer;border-left:none;}
 			.tool:first-child{border-left:1px solid #E9EDEF;border-top-left-radius:4px;border-bottom-left-radius:4px;}
 			.tool:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px;}
-			.tool:hover{background-color:#D9EAFB;border-color:#BBCEE3;}
+			.tool:hover{background-color:#D9EAFB;border-color:#E1E9F1;}
 			.tool.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
 			
 			.tool .tile{width:38px;height:38px;line-height:36px;border-radius:2px;
@@ -50,8 +50,9 @@
 			.tool .label{line-height:40px;height:40px;
 				margin:2px 14px 2px 12px;display:inline-block;}
 			.tool .label i{position:relative;top:0;}
-			#optionsbar .tool .label{margin-top:-2px;}
+			#optionsbar .tool .label{position:relative;top:-2px;}
 			#optionsbar .label span{margin-left:3px;}
+			#optionsbar .tool .label{margin:2px 14px 2px 14px;}
 			
 			.drop-up{position:absolute;bottom:48px;right:-1px;
 				list-style-type:none;margin:0;padding:0;}
@@ -61,7 +62,7 @@
 			.drop-up li:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}
 			.drop-up li:last-child{border-bottom:1px solid #E9EDEF;
 				border-bottom-left-radius:4px;border-bottom-right-radius:0;}
-			.drop-up li:hover{background-color:#D9EAFB;border-color:#BBCEE3;}
+			.drop-up li:hover{background-color:#D9EAFB;border-color:#E1E9F1;}
 			.drop-up li.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
 			.drop-up li .tile{position:absolute;margin:2px;}
 			.drop-up li .label{line-height:44px;margin:2px 14px 2px 12px;}
@@ -82,12 +83,12 @@
 	</head>
 	<body>
 		<div id="mapContainer">
-			<div id="mapboxMap" class="display-none"></div>
-			<div id="olMap" class="display-none"></div>
+			<div id="mapboxMap" class="display-none" onclick="dropClear();"></div>
+			<div id="olMap" class="display-none" onclick="dropClear();"></div>
 			<div id="stylebar" class="display-none"></div>
 			<div id="optionsbar">
 			</div>
-			<div id="liboption" class="tool display-none" onclick="clickToggle('libbar');">
+			<div id="liboption" class="tool display-none" onclick="clickDropToggle('libbar');">
 				<div class="label">
 					<i class="fa fa-fw fa-fw fa-cubes" aria-hidden="true"></i> 
 					<span id="libLabel"></span>
@@ -95,7 +96,7 @@
 				<ul id="libbar" class="drop-up display-none">
 				</ul>
 			</div>
-			<div id="mapoption" class="tool display-none" onclick="clickToggle('mapbar');">
+			<div id="mapoption" class="tool display-none" onclick="clickDropToggle('mapbar');">
 				<div class="label">
 					<i class="fa fa-fw fa-server" aria-hidden="true"></i> 
 					<span id="mapLabel"></span>
@@ -103,7 +104,7 @@
 				<ul id="mapbar" class="drop-up display-none">
 				</ul>
 			</div>
-			<div id="locoption" class="tool display-none" onclick="clickToggle('locbar');">
+			<div id="locoption" class="tool display-none" onclick="clickDropToggle('locbar');">
 				<div class="label">
 					<i class="fa fa-fw fa-crosshairs no-mr" aria-hidden="true"></i>
 				</div>
@@ -135,13 +136,15 @@
 
 			var initApp = function(){
 				//check for required options
-				console.log('options:',options);
+				//console.log('options:',options);
 				if (!options.start) return console.error('options: no start defined');
 				if (!options.styles) return console.error('options: no styles defined');
 				if (!options.maps) return console.error('options: no maps defined');
 				if (!options.libs) return console.error('options: no libs defined');
 
 				currentState = getState();
+
+				console.log('current state:',currentState);
 
 				window.addEventListener("resize",()=>{
 					windowResize();
@@ -611,10 +614,30 @@
 			window.clickToggle = function(id){
 				var toggle = document.getElementById(id);
 				if (toggle.style.display == 'block'){
+					// hide all other drops
 					toggle.style.display = 'none';
 				} else {
 					toggle.style.display = 'block';
 				}
+			};
+
+			var prevDrop;
+			window.clickDropToggle = function(id){
+				var drop = document.getElementById(id);
+				if (drop.style.display == 'block'){
+					drop.style.display = 'none';
+				} else {
+					// hide all other drops
+					if (prevDrop) prevDrop.style.display = 'none';
+
+					//apply click handler on rest of body to cancel out of drop
+					drop.style.display = 'block';
+					prevDrop = drop;
+				}
+			};
+
+			window.dropClear = function(){
+				if (prevDrop) prevDrop.style.display = 'none';
 			};
 
 			try {

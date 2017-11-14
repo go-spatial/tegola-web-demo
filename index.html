@@ -4,76 +4,9 @@
 		<meta charset="utf-8"/>
 		<title>Tegola Demo Viewer</title>
 
-		<script type="application/json" id="options">
+		<script type="application/json" id="config">
 		    {
-		    	"start":{
-	    			"zoom":15,
-	    			"longitude":-117.15117725013909,
-	    			"latitude":32.72269876352742,
-	    			"bearing":0,
-	    			"pitch":0,
-		    		"style":"hot-osm",
-		    		"map":"ec2",
-		    		"lib":"mapbox"
-		    	},
-		        "styles":[{
-		        	"key":"hot-osm",
-		        	"label":"HOT OSM",
-		        	"tileSrc":"images/hot-osm.png",
-		        	"mapboxStyle":"styles/hot-osm3d.json",
-		        	"olStyle":"styles/hot-osm.json"
-		        },{
-		        	"key":"camo",
-		        	"label":"Camo",
-		        	"tileSrc":"images/camo.png",
-		        	"mapboxStyle":"styles/camo3d.json",
-		        	"olStyle":"styles/camo.json"
-		        },{
-		        	"key":"night-vision",
-		        	"label":"Night",
-		        	"tileSrc":"images/night-vision.png",
-		        	"mapboxStyle":"styles/night-vision3d.json",
-		        	"olStyle":"styles/night-vision.json"
-		        },{
-		        	"key":"mobility",
-		        	"label":"Mobility",
-		        	"tileSrc":"images/mobility.png",
-		        	"mapboxStyle":"styles/mobility3d.json",
-		        	"olStyle":"styles/mobility.json"
-		        },{
-		        	"key":"osgeo",
-		        	"label":"OSGeo",
-		        	"tileSrc":"images/osgeo.png",
-		        	"mapboxStyle":"styles/osgeo3d.json",
-		        	"olStyle":"styles/osgeo.json"
-		        }],
-		        "maps":[{
-		        	"key":"ec2",
-		        	"label":"EC2",
-		        	"sources":{
-	        			"osm":{
-	        				"url":"https://osm.tegola.io/capabilities/osm.json",
-	        				"type":"vector"
-	        			},
-	        			"satellite":{
-	        				"url":"http://osm.tegola.io/{z}/{x}/{y}",
-	        				"type":"raster",
-	        				"attribution":"© DigitalGlobe, Inc"
-	        			}
-	        		},
-		        	"url":"https://osm.tegola.io/capabilities/osm.json",
-		        	"styleName":"osm"
-		        }],
-		        "libs":[{
-		        	"key":"mapbox",
-		        	"label":"Mapbox",
-		        	"library":"mapbox",
-		        	"accessToken":"pk.eyJ1IjoiamowaG5zMG4iLCJhIjoiY2o1YjRtMjZpMGd2MDJ3bW00bnA5NXdyMiJ9.qlR4a_qfTlKZs1Qisk6sAg"
-		        },{
-		        	"key":"ol",
-		        	"label":"Open Layers",
-		        	"library":"ol"
-		        }]
+		    	"path":"config.json"
 		    }
 		</script>
 		<style type="text/css">
@@ -116,7 +49,9 @@
 			.tool.active .tile{opacity:1;}
 			.tool .label{line-height:40px;height:40px;
 				margin:2px 14px 2px 12px;display:inline-block;}
-			.tool .label i{position:relative;top:0;margin-right:3px;}
+			.tool .label i{position:relative;top:0;}
+			#optionsbar .tool .label{margin-top:-2px;}
+			#optionsbar .label span{margin-left:3px;}
 			
 			.drop-up{position:absolute;bottom:48px;right:-1px;
 				list-style-type:none;margin:0;padding:0;}
@@ -135,6 +70,8 @@
 
 			@media only screen and (max-width:1000px) {
 				#stylebar .label{display:none;}
+				#optionsbar .label span{display:none;}
+				#optionsbar .drop-up li .label span{display:block;}
 			}
 		</style>
 
@@ -152,7 +89,7 @@
 			</div>
 			<div id="liboption" class="tool display-none" onclick="clickToggle('libbar');">
 				<div class="label">
-					<i class="fa fa-cubes" aria-hidden="true"></i> 
+					<i class="fa fa-fw fa-fw fa-cubes" aria-hidden="true"></i> 
 					<span id="libLabel"></span>
 				</div>
 				<ul id="libbar" class="drop-up display-none">
@@ -160,10 +97,17 @@
 			</div>
 			<div id="mapoption" class="tool display-none" onclick="clickToggle('mapbar');">
 				<div class="label">
-					<i class="fa fa-server" aria-hidden="true"></i> 
+					<i class="fa fa-fw fa-server" aria-hidden="true"></i> 
 					<span id="mapLabel"></span>
 				</div>
 				<ul id="mapbar" class="drop-up display-none">
+				</ul>
+			</div>
+			<div id="locoption" class="tool display-none" onclick="clickToggle('locbar');">
+				<div class="label">
+					<i class="fa fa-fw fa-crosshairs no-mr" aria-hidden="true"></i>
+				</div>
+				<ul id="locbar" class="drop-up display-none">
 				</ul>
 			</div>
 		</div>
@@ -175,47 +119,73 @@
 		'use strict';
 
 		(()=>{
-			try{
-				var options = JSON.parse(document.getElementById('options').innerHTML);
-			}catch(e){
-				return console.error('error parsing options JSON:',e);
-			}
-			console.log('options:',options);
+			var styles = {}, maps = {}, libs = {}, locs = {},
+				currentState = {}, options = {};
 
-			//check for required options
-			if (!options.start) return console.error('options: no start defined');
-			if (!options.styles) return console.error('options: no styles defined');
-			if (!options.maps) return console.error('options: no maps defined');
-			if (!options.libs) return console.error('options: no libs defined');
+			var queryOldToNew = {
+				latitude:'lat',
+				longitude:'lng',
+				bearing:'brng',
+				pitch:'pitch',
+				source:'map',
+				theme:'style',
+				renderer:'lib',
+				zoom:'z'
+			};
 
-			var styles = {}, maps = {}, libs = {},
-				currentState = {};
+			var initApp = function(){
+				//check for required options
+				console.log('options:',options);
+				if (!options.start) return console.error('options: no start defined');
+				if (!options.styles) return console.error('options: no styles defined');
+				if (!options.maps) return console.error('options: no maps defined');
+				if (!options.libs) return console.error('options: no libs defined');
 
-			// getState pulls the app state from the query first, then the start configs
+				currentState = getState();
+
+				window.addEventListener("resize",()=>{
+					windowResize();
+				});
+				windowResize();
+
+				buildStyles();
+				buildLocs();
+				buildMaps();
+				buildLibs();
+				
+				setStyle(currentState.style);
+				setMap(currentState.map);
+				setLib(currentState.lib);
+
+				updateMap();
+			};
+			var windowResize = function(){
+				document.getElementById('mapboxMap').style.height = window.innerHeight+'px';
+				document.getElementById('olMap').style.height = window.innerHeight+'px';
+			};
 			var getState = function(){
 				var query = parseQuery();
+				var q = {};
 
-				/*
-				// query mapping old => new
+				for (var i in query){
+					if (queryOldToNew[i]) query[queryOldToNew[i]] = query[i];
+				}
 
-				theme -> style
-				source -> map
-				renderer -> lib
-				*/
-
-
-				query.zoom = +query.zoom || options.start.zoom;
-				query.latitude = +query.latitude || options.start.latitude;
-				query.longitude = +query.longitude || options.start.longitude;
-				query.bearing = +query.bearing || options.start.bearing;
-				query.pitch = +query.pitch || options.start.pitch;
-				query.style = query.style || options.start.style;
-				query.map = query.map || options.start.map;
-				query.lib = query.lib || options.start.lib;
-				return query;
+				q.z = +query.z || options.start.z;
+				q.lat = +query.lat || options.start.lat;
+				q.lng = +query.lng || options.start.lng;
+				q.brng = +query.brng || options.start.brng;
+				q.pitch = +query.pitch || options.start.pitch;
+				q.style = query.style || options.start.style;
+				q.map = query.map || options.start.map;
+				q.lib = query.lib || options.start.lib;
+				return q;
 			};
 			var setState = function(state){
-				var query = makeQuery(state);
+				var set = clone(state);
+				if (set.brng == 0) delete set.brng;
+				if (set.pitch == 0) delete set.pitch;
+				var query = makeQuery(set);
 				window.history.pushState(undefined,'posUpdate',query);
 			};
 			var parseQuery = function(){
@@ -232,8 +202,10 @@
 			};
 			var makeQuery = function(state){
 				var parts = [];
-				for (var i in state){
-					parts.push(i+'='+encodeURIComponent(state[i]));
+				var write = clone(state);
+				for (var i in write){
+					if (getType(write[i]) == 'num') write[i] = write[i].toString();
+					parts.push(i+'='+encodeURIComponent(write[i]));
 				}
 				if (parts.length < 1) return '';
 			    return '?'+parts.join('&');
@@ -274,7 +246,7 @@
 				}
 				return obj2;
 			};
-			var setTheme = function(key){
+			var setStyle = function(key){
 				var style = styles[key];
 				if (!style) return console.error('style:',key,' not found');
 				for (var i in styles){
@@ -293,7 +265,7 @@
 				document.getElementById('mapLabel').innerHTML = map.label;
 				currentState.map = key;
 			};
-			var setRenderer = function(key){
+			var setLib = function(key){
 				var lib = libs[key];
 				if (!lib) return console.error('lib:',key,' not found');
 				for (var i in libs){
@@ -305,6 +277,13 @@
 					libs[currentState.lib].client.clear();
 				}
 				currentState.lib = key;
+			};
+			var setLoc = function(key){
+				var loc = locs[key];
+				if (!loc) return console.error('loc:',key,' not found');
+				currentState.lat = loc.lat;
+				currentState.lng = loc.lng;
+				currentState.z = loc.z;
 			};
 			var updateMap = function(){
 				if (!currentState.lib) return console.error('no lib defined');
@@ -330,79 +309,80 @@
 				});
 				xhr.send();
 			};
+			var parseDecimal = function(dec){
+				return Number(dec.toFixed(4));
+			};
+			var buildStyles = function(){
+				options.styles.forEach((config,ind)=>{
+					var style = clone(config);
 
-			window.clickSetTheme = function(key){
-				setTheme(key);
-				setState(currentState);
-				updateMap();
+					var html = '<div class="tool" onclick="clickSetTheme(\''+style.key+'\');">';
+					html += '<div class="tile" style="background:url('+style.tileSrc+');"></div>';
+					html += '<div class="label">'+style.label+'</div>';
+					html += '</div>';
+
+					style.el = elFromStr(html);
+					document.getElementById('stylebar').appendChild(style.el);
+					styles[style.key] = style;
+				});
+				if (options.styles.length > 1) document.getElementById('stylebar').style.display = 'block';
 			};
-			window.clickSetSource = function(key){
-				setMap(key);
-				setState(currentState);
-				updateMap();
-			};
-			window.clickSetRenderer = function(key){
-				setRenderer(key);
-				setState(currentState);
-				updateMap();
-			};
-			window.clickToggle = function(id){
-				var toggle = document.getElementById(id);
-				if (toggle.style.display == 'block'){
-					toggle.style.display = 'none';
-				} else {
-					toggle.style.display = 'block';
+			var buildMaps = function(){
+				options.maps.forEach((config,ind)=>{
+					var map = clone(config);
+
+					var html = '<li onclick="clickSetSource(\''+map.key+'\');">';
+					html += '<div class="label">'+map.label+'</div>';
+					html += '</li>';
+
+					map.el = elFromStr(html);
+					document.getElementById('mapbar').appendChild(map.el);
+					maps[map.key] = map;
+				});
+				if (options.maps.length > 1){
+					var mapOption = document.getElementById('mapoption');
+					mapOption.style.display = 'block';
+					document.getElementById('optionsbar').appendChild(mapOption);
 				}
 			};
+			var buildLibs = function(){
+				options.libs.forEach((config,ind)=>{
+					var lib = clone(config);
 
-			options.styles.forEach((config,ind)=>{
-				var style = clone(config);
+					var html = '<li onclick="clickSetLib(\''+lib.key+'\');">';
+					html += '<div class="label"> '+lib.label+'</div>';
+					html += '</li>';
 
-				var html = '<div class="tool" onclick="clickSetTheme(\''+style.key+'\');">';
-				html += '<div class="tile" style="background:url('+style.tileSrc+');"></div>';
-				html += '<div class="label">'+style.label+'</div>';
-				html += '</div>';
+					lib.el = elFromStr(html);
+					document.getElementById('libbar').appendChild(lib.el);
+					libs[lib.key] = lib;
+				});
+				if (options.libs.length > 1){
+					var libOption = document.getElementById('liboption');
+					libOption.style.display = 'block';
+					document.getElementById('optionsbar').appendChild(libOption);
+				}
 
-				style.el = elFromStr(html);
-				document.getElementById('stylebar').appendChild(style.el);
-				styles[style.key] = style;
-			});
-			if (options.styles.length > 1) document.getElementById('stylebar').style.display = 'block';
+				libs['mapbox'].client = mapboxClient;
+				libs['ol'].client = olClient;
+			};
+			var buildLocs = function(){
+				if (!options.locs || options.locs.length < 1) return;
+				options.locs.forEach((config,ind)=>{
+					var loc = clone(config);
 
-			options.maps.forEach((config,ind)=>{
-				var map = clone(config);
+					var html = '<li onclick="clickSetLoc(\''+loc.key+'\');">';
+					html += '<div class="label"> '+loc.label+'</div>';
+					html += '</li>';
 
-				var html = '<li onclick="clickSetSource(\''+map.key+'\');">';
-				html += '<div class="label">'+map.label+'</div>';
-				html += '</li>';
-
-				map.el = elFromStr(html);
-				document.getElementById('mapbar').appendChild(map.el);
-				maps[map.key] = map;
-			});
-			if (options.maps.length > 1){
-				var mapOption = document.getElementById('mapoption');
-				mapOption.style.display = 'block';
-				document.getElementById('optionsbar').appendChild(mapOption);
-			}
-
-			options.libs.forEach((config,ind)=>{
-				var lib = clone(config);
-
-				var html = '<li onclick="clickSetRenderer(\''+lib.key+'\');">';
-				html += '<div class="label"> '+lib.label+'</div>';
-				html += '</li>';
-
-				lib.el = elFromStr(html);
-				document.getElementById('libbar').appendChild(lib.el);
-				libs[lib.key] = lib;
-			});
-			if (options.libs.length > 1){
-				var libOption = document.getElementById('liboption');
-				libOption.style.display = 'block';
-				document.getElementById('optionsbar').appendChild(libOption);
-			}
-
+					loc.el = elFromStr(html);
+					document.getElementById('locbar').appendChild(loc.el);
+					locs[loc.key] = loc;
+				});
+				var locOption = document.getElementById('locoption');
+				locOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(locOption);
+			};
 			var mapboxClient = {
 				render:function(){
 					document.getElementById('mapboxMap').style.display = 'block';
@@ -410,7 +390,7 @@
 					var style = styles[currentState.style];
 					var lib = libs[currentState.lib];
 					var map = maps[currentState.map];
-					var center = [currentState.longitude,currentState.latitude];
+					var center = [currentState.lng,currentState.lat];
 
 					if (lib.accessToken) mapboxgl.accessToken = lib.accessToken;
 
@@ -433,17 +413,17 @@
 								container:'mapboxMap',
 								style:styleJson,
 								center:center,
-								bearing:currentState.bearing,
+								brng:currentState.brng,
 								pitch:currentState.pitch,
-								zoom:currentState.zoom
+								zoom:currentState.z
 							});
 							this.el.on('render',()=>{
 								var center = this.el.getCenter();
-								currentState.longitude = center.lng;
-								currentState.latitude = center.lat;
-								currentState.zoom = this.el.getZoom();
+								currentState.lng = parseDecimal(center.lng);
+								currentState.lat = parseDecimal(center.lat);
+								currentState.z = parseDecimal(this.el.getZoom());
 								currentState.pitch = this.el.getPitch();
-								currentState.bearing = this.el.getBearing();
+								currentState.brng = this.el.getBearing();
 								setState(currentState);
 							});
 							this.el.addControl(new mapboxgl.NavigationControl());
@@ -464,8 +444,8 @@
 
 						this.el.setStyle(styleJson);
 						this.el.setCenter(center);
-						this.el.setZoom(this.zoom);
-						this.el.setBearing(this.bearing);
+						this.el.setZoom(this.z);
+						this.el.setBearing(this.brng);
 						this.el.setPitch(this.pitch);
 					});	
 				},
@@ -473,18 +453,21 @@
 					document.getElementById('mapboxMap').style.display = 'none';
 				}
 			};
-			libs['mapbox'].client = mapboxClient;
-
 			var olClient = {
 				render:function(){
 					document.getElementById('olMap').style.display = 'block';
 
-					var style = styles[currentState.style];
-					var center = ol.proj.fromLonLat([currentState.longitude,currentState.latitude]);
-					var map = maps[currentState.map];
+					var style = styles[currentState.style],
+						center = ol.proj.fromLonLat([currentState.lng,currentState.lat]),
+						map = maps[currentState.map],
+						doBind = false; // only do binding of property change on initial init of map, but after properties have been set
 
 					this.el = this.el || new ol.Map({target:'olMap'});
-					this.view = this.view || this.el.getView();
+
+					if (!this.view){
+						this.view = this.el.getView();
+						doBind = true;
+					}
 
 					// apply styles
 					if (this.style != currentState.style){
@@ -499,23 +482,41 @@
 						for (var i in map.sources){
 							var source = map.sources[i];
 							if (source.type == 'vector'){
-								var format = new ol.format.GeoJSON();
+								var layer = new ol.layer.Vector({
+									source:new ol.source.Vector({
+										url:source.url,
+										format:new ol.format.GeoJSON()
+									})
+								});
+							} else if (source.type == 'raster'){
+								var layer = new ol.layer.Tile({
+									title:source.title,
+									source:new ol.source.XYZ({
+										url:source.url,
+										attribution:source.attribution
+									})
+								});
 							}
-							var layer = new ol.layer.Vector({
-								source:new ol.source.Vector({
-									url:source.url,
-									format:format
-								})
-							});
 							this.el.addLayer(layer);
 						}
 					}
-					if (currentState.zoom !== this.zoom){
-						this.view.setZoom(currentState.zoom+1);
+					if (currentState.z !== this.z){
+						this.view.setZoom(currentState.z+1);
 					}
-					if (currentState.longitude !== this.longitude || 
-						currentState.latitude !== this.latitude){
+					if (currentState.lng !== this.lng || 
+						currentState.lat !== this.lat){
 						this.view.setCenter(center);
+					}
+
+					if (doBind){
+						this.view.on('propertychange',(e)=>{
+							var center = this.view.getCenter();
+							var lngLat = ol.proj.toLonLat(center);
+							currentState.lng = parseDecimal(lngLat[0]);
+							currentState.lat = parseDecimal(lngLat[1]);
+							currentState.z = parseDecimal(this.view.getZoom()-1);
+							setState(currentState);
+						});
 					}
 
 					for (var i in currentState){
@@ -538,8 +539,8 @@
 						});
 						this.view = this.map.getView();
 
-						//console.log('zoom:',currentState.zoom+1,center);
-						this.view.setZoom(currentState.zoom+1);
+						//console.log('z:',currentState.z+1,center);
+						this.view.setZoom(currentState.z+1);
 						this.view.setCenter(center);
 						olms.apply(this.map,style.olStyle);
 
@@ -568,11 +569,11 @@
 						});
 						this.map.addLayer(layer);
 					}
-					if (currentState.zoom !== this.zoom){
-						this.view.setZoom(currentState.zoom+1);
+					if (currentState.z !== this.z){
+						this.view.setZoom(currentState.z+1);
 					}
-					if (currentState.longitude !== this.longitude || 
-						currentState.latitude !== this.latitude){
+					if (currentState.lng !== this.lng || 
+						currentState.lat !== this.lat){
 						this.view.setCenter(center);
 					}
 
@@ -586,17 +587,51 @@
 					document.getElementById('olMap').style.display = 'none';
 				}
 			};
-			libs['ol'].client = olClient;
 
-			currentState = getState();
+			window.clickSetTheme = function(key){
+				setStyle(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetSource = function(key){
+				setMap(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetLib = function(key){
+				setLib(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetLoc = function(key){
+				setLoc(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickToggle = function(id){
+				var toggle = document.getElementById(id);
+				if (toggle.style.display == 'block'){
+					toggle.style.display = 'none';
+				} else {
+					toggle.style.display = 'block';
+				}
+			};
 
-			document.getElementById('mapboxMap').style.height = window.innerHeight+'px';
-			document.getElementById('olMap').style.height = window.innerHeight+'px';
+			try {
+				var config = JSON.parse(document.getElementById('config').innerHTML);
+			} catch(e){
+				return console.error('error parsing config JSON:',e);
+			}
 
-			setTheme(currentState.style);
-			setMap(currentState.map);
-			setRenderer(currentState.lib);
-			updateMap();
+			if (config.path){
+				loadJsonFile(config.path,(json)=>{
+					options = json;
+					initApp();
+				});
+			} else {
+				options = config;
+				initApp();
+			}
 
 		})();
 

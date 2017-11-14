@@ -19,6 +19,9 @@
     "osm": {
       "type": "vector",
       "url": "https://osm.tegola.io/capabilities/osm.json"
+    },
+    "satellite": {
+      "type": "raster"
     }
   },
   "sprite": "https://go-spatial.github.io/tegola-web-demo/spritesets/osm_tegola_spritesheet",

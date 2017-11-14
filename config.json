@@ -3,44 +3,50 @@
 		"z":11,
 		"lat":32.72,
 		"lng":-117.15,
-		"brng":0,
+		"bear":0,
 		"pitch":0,
 		"style":"hot-osm",
-		"map":"ec2",
+		"src":"ec2",
 		"lib":"mapbox"
 	},
+	"styleHost":"http://demo.tegola.io",
     "styles":[{
     	"key":"hot-osm",
     	"label":"HOT OSM",
     	"tileSrc":"images/hot-osm.png",
     	"mapboxStyle":"styles/hot-osm3d.json",
-    	"olStyle":"styles/hot-osm.json"
+    	"olStyle":"styles/hot-osm.json",
+    	"host":"http://demo.tegola.io"
     },{
     	"key":"camo",
     	"label":"Camo",
     	"tileSrc":"images/camo.png",
     	"mapboxStyle":"styles/camo3d.json",
-    	"olStyle":"styles/camo.json"
+    	"olStyle":"styles/camo.json",
+    	"host":"http://demo.tegola.io"
     },{
     	"key":"night-vision",
     	"label":"Night",
     	"tileSrc":"images/night-vision.png",
     	"mapboxStyle":"styles/night-vision3d.json",
-    	"olStyle":"styles/night-vision.json"
+    	"olStyle":"styles/night-vision.json",
+    	"host":"http://demo.tegola.io"
     },{
     	"key":"mobility",
     	"label":"Mobility",
     	"tileSrc":"images/mobility.png",
     	"mapboxStyle":"styles/mobility3d.json",
-    	"olStyle":"styles/mobility.json"
+    	"olStyle":"styles/mobility.json",
+    	"host":"http://demo.tegola.io"
     },{
     	"key":"osgeo",
     	"label":"OSGeo",
     	"tileSrc":"images/osgeo.png",
     	"mapboxStyle":"styles/osgeo3d.json",
-    	"olStyle":"styles/osgeo.json"
+    	"olStyle":"styles/osgeo.json",
+    	"host":"http://demo.tegola.io"
     }],
-    "maps":[{
+    "srcs":[{
     	"key":"ec2",
     	"label":"EC2",
     	"sources":{
@@ -53,9 +59,7 @@
 				"type":"raster",
 				"attribution":"© DigitalGlobe, Inc"
 			}
-		},
-    	"url":"https://osm.tegola.io/capabilities/osm.json",
-    	"styleName":"osm"
+		}
     }],
     "libs":[{
     	"key":"mapbox",

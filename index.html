@@ -96,12 +96,12 @@
 				<ul id="libbar" class="drop-up display-none">
 				</ul>
 			</div>
-			<div id="mapoption" class="tool display-none" onclick="clickDropToggle('mapbar');">
+			<div id="srcoption" class="tool display-none" onclick="clickDropToggle('srcbar');">
 				<div class="label">
 					<i class="fa fa-fw fa-server" aria-hidden="true"></i> 
-					<span id="mapLabel"></span>
+					<span id="srcLabel"></span>
 				</div>
-				<ul id="mapbar" class="drop-up display-none">
+				<ul id="srcbar" class="drop-up display-none">
 				</ul>
 			</div>
 			<div id="locoption" class="tool display-none" onclick="clickDropToggle('locbar');">
@@ -120,15 +120,15 @@
 		'use strict';
 
 		(()=>{
-			var styles = {}, maps = {}, libs = {}, locs = {},
+			var styles = {}, srcs = {}, libs = {}, locs = {},
 				currentState = {}, options = {};
 
 			var queryOldToNew = {
 				latitude:'lat',
 				longitude:'lng',
-				bearing:'brng',
+				bearing:'bear',
 				pitch:'pitch',
-				source:'map',
+				source:'src',
 				theme:'style',
 				renderer:'lib',
 				zoom:'z'
@@ -139,7 +139,7 @@
 				//console.log('options:',options);
 				if (!options.start) return console.error('options: no start defined');
 				if (!options.styles) return console.error('options: no styles defined');
-				if (!options.maps) return console.error('options: no maps defined');
+				if (!options.srcs) return console.error('options: no srcs defined');
 				if (!options.libs) return console.error('options: no libs defined');
 
 				currentState = getState();
@@ -153,11 +153,11 @@
 
 				buildStyles();
 				buildLocs();
-				buildMaps();
+				buildSrcs();
 				buildLibs();
 				
 				setStyle(currentState.style);
-				setMap(currentState.map);
+				setSrc(currentState.src);
 				setLib(currentState.lib);
 
 				updateMap();
@@ -177,16 +177,17 @@
 				q.z = +query.z || options.start.z;
 				q.lat = +query.lat || options.start.lat;
 				q.lng = +query.lng || options.start.lng;
-				q.brng = +query.brng || options.start.brng;
+				q.bear = +query.bear || options.start.bear;
 				q.pitch = +query.pitch || options.start.pitch;
 				q.style = query.style || options.start.style;
-				q.map = query.map || options.start.map;
+				q.src = query.src || options.start.src;
 				q.lib = query.lib || options.start.lib;
+				if (query.styleHost) q.styleHost = query.styleHost;
 				return q;
 			};
 			var setState = function(state){
 				var set = clone(state);
-				if (set.brng == 0) delete set.brng;
+				if (set.bear == 0) delete set.bear;
 				if (set.pitch == 0) delete set.pitch;
 				var query = makeQuery(set);
 				window.history.pushState(undefined,'posUpdate',query);
@@ -258,15 +259,15 @@
 				style.el.className = style.el.className+' active';
 				currentState.style = key;
 			};
-			var setMap = function(key){
-				var map = maps[key];
-				if (!map) return console.error('map:',key,' not found');
-				for (var i in maps){
-					maps[i].el.className = maps[i].el.className.replace(' active','');
+			var setSrc = function(key){
+				var src = srcs[key];
+				if (!src) return console.error('src:',key,' not found');
+				for (var i in srcs){
+					srcs[i].el.className = srcs[i].el.className.replace(' active','');
 				}
-				map.el.className = map.el.className+' active';
-				document.getElementById('mapLabel').innerHTML = map.label;
-				currentState.map = key;
+				src.el.className = src.el.className+' active';
+				document.getElementById('srcLabel').innerHTML = src.label;
+				currentState.src = key;
 			};
 			var setLib = function(key){
 				var lib = libs[key];
@@ -293,25 +294,46 @@
 				var lib = libs[currentState.lib];
 				lib.client.render();
 			};
-			var loadJsonFile = function(url,loaded){
+			var loadFile = function(url,loaded){
 				var xhr = new XMLHttpRequest();
 				xhr.open('GET', url);
 				var a = document.createElement('A');
 				a.href = url;
 				xhr.addEventListener('load',()=>{
-					try{
-						//console.log('response:',xhr.responseText);
-						var json = JSON.parse(xhr.responseText);
-					} catch(e){
-						return console.error('error parsing json from file:',url,e);
-					}
-					loaded(json);
+					loaded(xhr.responseText);
 				});
 				xhr.addEventListener('error', function () {
 					console.error('error loading file:',url);
 				});
 				xhr.send();
 			};
+			var loadJsonFile = function(url,loaded){
+				loadFile(url,(response)=>{
+					try{
+						var json = JSON.parse(response);
+					} catch(e){
+						return console.error('error parsing json from file:',url,e);
+					}
+					loaded(json);
+				});
+			};
+			var loadStyleFile = function(url,style,loaded){
+				loadFile(url,(response)=>{
+					if (style.host && currentState.styleHost != style.host){
+						var regex = new RegExp(style.host,'g');
+						response = response.replace(regex,currentState.styleHost);
+					}
+					try{
+						var json = JSON.parse(response);
+					} catch(e){
+						return console.error('error parsing json from file:',url,e);
+					}
+					loaded(json);
+				});
+			};
+
+			// options.start.styleHost
+
 			var parseDecimal = function(dec){
 				return Number(dec.toFixed(4));
 			};
@@ -330,22 +352,22 @@
 				});
 				if (options.styles.length > 1) document.getElementById('stylebar').style.display = 'block';
 			};
-			var buildMaps = function(){
-				options.maps.forEach((config,ind)=>{
-					var map = clone(config);
+			var buildSrcs = function(){
+				options.srcs.forEach((config,ind)=>{
+					var src = clone(config);
 
-					var html = '<li onclick="clickSetSource(\''+map.key+'\');">';
-					html += '<div class="label">'+map.label+'</div>';
+					var html = '<li onclick="clickSetSource(\''+src.key+'\');">';
+					html += '<div class="label">'+src.label+'</div>';
 					html += '</li>';
 
-					map.el = elFromStr(html);
-					document.getElementById('mapbar').appendChild(map.el);
-					maps[map.key] = map;
+					src.el = elFromStr(html);
+					document.getElementById('srcbar').appendChild(src.el);
+					srcs[src.key] = src;
 				});
-				if (options.maps.length > 1){
-					var mapOption = document.getElementById('mapoption');
-					mapOption.style.display = 'block';
-					document.getElementById('optionsbar').appendChild(mapOption);
+				if (options.srcs.length > 1){
+					var srcOption = document.getElementById('srcoption');
+					srcOption.style.display = 'block';
+					document.getElementById('optionsbar').appendChild(srcOption);
 				}
 			};
 			var buildLibs = function(){
@@ -392,18 +414,20 @@
 
 					var style = styles[currentState.style];
 					var lib = libs[currentState.lib];
-					var map = maps[currentState.map];
+					var src = srcs[currentState.src];
 					var center = [currentState.lng,currentState.lat];
+
+					//console.log('src:',src,srcs,currentState.src);
 
 					if (lib.accessToken) mapboxgl.accessToken = lib.accessToken;
 
-					loadJsonFile(style.mapboxStyle,(styleJson)=>{
+					loadStyleFile(style.mapboxStyle,style,(styleJson)=>{
 						var styleSources = {};
 						for (var i in styleJson.sources){
-							if (map.sources[i]){ // source is defined in map
+							if (src.sources[i]){ // source is defined in src
 								styleSources[i] = clone(styleJson.sources[i]);
-								for (var j in map.sources[i]){ // overwrite style sources with map source settings
-									styleSources[i][j] = map.sources[i][j];
+								for (var j in src.sources[i]){ // overwrite style sources with src source settings
+									styleSources[i][j] = src.sources[i][j];
 								}
 							}
 						}
@@ -416,7 +440,7 @@
 								container:'mapboxMap',
 								style:styleJson,
 								center:center,
-								brng:currentState.brng,
+								bear:currentState.bear,
 								pitch:currentState.pitch,
 								zoom:currentState.z
 							});
@@ -426,7 +450,7 @@
 								currentState.lat = parseDecimal(center.lat);
 								currentState.z = parseDecimal(this.el.getZoom());
 								currentState.pitch = this.el.getPitch();
-								currentState.brng = this.el.getBearing();
+								currentState.bear = this.el.getBearing();
 								setState(currentState);
 							});
 							this.el.addControl(new mapboxgl.NavigationControl());
@@ -448,7 +472,7 @@
 						this.el.setStyle(styleJson);
 						this.el.setCenter(center);
 						this.el.setZoom(this.z);
-						this.el.setBearing(this.brng);
+						this.el.setBearing(this.bear);
 						this.el.setPitch(this.pitch);
 					});	
 				},
@@ -462,7 +486,7 @@
 
 					var style = styles[currentState.style],
 						center = ol.proj.fromLonLat([currentState.lng,currentState.lat]),
-						map = maps[currentState.map],
+						src = srcs[currentState.src],
 						doBind = false; // only do binding of property change on initial init of map, but after properties have been set
 
 					this.el = this.el || new ol.Map({target:'olMap'});
@@ -478,12 +502,12 @@
 					}
 
 					// if source changed blitz layers and rebuild
-					if (this.map != currentState.map){
+					if (this.src != currentState.src){
 						this.el.getLayers().getArray().forEach((layer)=>{
 							this.el.removeLayer(layer);
 						});
-						for (var i in map.sources){
-							var source = map.sources[i];
+						for (var i in src.sources){
+							var source = src.sources[i];
 							if (source.type == 'vector'){
 								var layer = new ol.layer.Vector({
 									source:new ol.source.Vector({
@@ -525,66 +549,6 @@
 					for (var i in currentState){
 						this[i] = currentState[i];
 					}
-
-					/*
-
-					if (!this.map){
-						this.map = new ol.Map({
-							layers:[
-								new ol.layer.Vector({
-									source:new ol.source.Vector({
-										url:source.url,
-										format: new ol.format.GeoJSON()
-									})
-								})
-							],
-							target:'olMap'
-						});
-						this.view = this.map.getView();
-
-						//console.log('z:',currentState.z+1,center);
-						this.view.setZoom(currentState.z+1);
-						this.view.setCenter(center);
-						olms.apply(this.map,style.olStyle);
-
-						return;		
-					}
-					var changed = false;
-					for (var i in currentState){
-						if (currentState[i] !== this[i]){
-							changed = true;
-							break;
-						}
-					}
-					if (!changed) return;
-					//console.log('style:',style);
-					this.map.getLayers().getArray().forEach((layer)=>{
-						this.map.removeLayer(layer);
-					});
-					olms.apply(this.map,style.olStyle);
-
-					if (currentState.source !== this.source){
-						var layer = new ol.layer.Vector({
-							source:new ol.source.Vector({
-								url:source.url,
-								format:new ol.format.GeoJSON()
-							})
-						});
-						this.map.addLayer(layer);
-					}
-					if (currentState.z !== this.z){
-						this.view.setZoom(currentState.z+1);
-					}
-					if (currentState.lng !== this.lng || 
-						currentState.lat !== this.lat){
-						this.view.setCenter(center);
-					}
-
-					
-
-					for (var i in currentState){
-						this[i] = currentState[i];
-					}*/
 				},
 				clear:function(){
 					document.getElementById('olMap').style.display = 'none';
@@ -597,7 +561,7 @@
 				updateMap();
 			};
 			window.clickSetSource = function(key){
-				setMap(key);
+				setSrc(key);
 				setState(currentState);
 				updateMap();
 			};

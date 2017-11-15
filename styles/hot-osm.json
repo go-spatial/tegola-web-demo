@@ -2811,7 +2811,7 @@
       "minzoom": 16,
       "maxzoom": 24,
       "layout": {
-        "icon-image": "{type}-18.png"
+        "icon-image": "{type}-18"
       },
       "paint": {
         "icon-color": "rgba(12, 9, 9, 1)"
@@ -2831,7 +2831,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "{tourism}-18.png",
+        "icon-image": "{tourism}-18",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,
@@ -2874,7 +2874,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "{type}-12.png",
+        "icon-image": "{type}-12",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,
@@ -2902,7 +2902,7 @@
         "all"
       ],
       "layout": {
-        "icon-image": "{type}-18.png",
+        "icon-image": "{type}-18",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,
@@ -2945,7 +2945,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "{type}-12.png",
+        "icon-image": "{type}-12",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,
@@ -2973,7 +2973,7 @@
         "all"
       ],
       "layout": {
-        "icon-image": "{type}-18.png",
+        "icon-image": "{type}-18",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,
@@ -3006,7 +3006,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "power_tower-12.png"
+        "icon-image": "power_tower-12"
       }
     },
     {
@@ -3025,7 +3025,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "airport-18.png"
+        "icon-image": "airport-18"
       }
     },
     {
@@ -3049,7 +3049,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "place_of_worship-18.png"
+        "icon-image": "place_of_worship-18"
       }
     },
     {
@@ -3061,7 +3061,7 @@
         "all"
       ],
       "layout": {
-        "icon-image": "{religion}-18.png"
+        "icon-image": "{religion}-18"
       }
     },
     {
@@ -3071,7 +3071,7 @@
       "source-layer": "landuse_areas",
       "minzoom": 16,
       "layout": {
-        "icon-image": "{type}-18.png"
+        "icon-image": "{type}-18"
       }
     },
     {
@@ -3089,7 +3089,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "acra-18.png"
+        "icon-image": "acra-18"
       }
     },
     {
@@ -3131,7 +3131,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "oxfam-18.png"
+        "icon-image": "oxfam-18"
       }
     },
     {
@@ -3149,7 +3149,7 @@
         ]
       ],
       "layout": {
-        "icon-image": "{shop}-18.png",
+        "icon-image": "{shop}-18",
         "visibility": "visible",
         "text-field": "{name}",
         "text-size": 8,

@@ -321,7 +321,7 @@
 			};
 			var loadStyleFile = function(url,style,src,loaded){
 				loadFile(url,(response)=>{
-					if (style.host && currentState.styleHost != style.host){
+					if (style.host && currentState.styleHost && currentState.styleHost != style.host){
 						var regex = new RegExp(style.host,'g');
 						response = response.replace(regex,currentState.styleHost);
 					}
@@ -330,6 +330,8 @@
 					} catch(e){
 						return console.error('error parsing json from file:',url,e);
 					}
+
+					console.log('styleJson:',json);
 
 					var styleSources = {};
 					for (var i in json.sources){

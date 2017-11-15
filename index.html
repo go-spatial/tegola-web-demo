@@ -146,7 +146,7 @@
 
 				currentState = getState();
 
-				console.log('current state:',currentState);
+				//console.log('current state:',currentState);
 
 				window.addEventListener("resize",()=>{
 					windowResize();
@@ -331,7 +331,7 @@
 						return console.error('error parsing json from file:',url,e);
 					}
 
-					console.log('styleJson:',json);
+					//console.log('styleJson:',json);
 
 					var styleSources = {};
 					for (var i in json.sources){

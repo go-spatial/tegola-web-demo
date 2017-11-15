@@ -4,7 +4,7 @@ This repo contains a web page demonstrating the rendering of a map utilizing [Te
 
 ## Configuration
 
-In the root of this repo, there is an index.html file which contains a configuration JSON that allows for customizable styles, rendering libraries, locations, and sources.
+In the root of this repo, there is an config.json file which defines the styles, rendering libraries, locations, and sources to be displayed.
 
 The following is an example JSON configuration:
 

@@ -70,14 +70,16 @@
 			.display-none{display:none;}
 
 			@media only screen and (max-width:1000px) {
+				#stylebar{margin:12px;}
 				#stylebar .label{display:none;}
+				#optionsbar{margin:12px;}
 				#optionsbar .label span{display:none;}
 				#optionsbar .drop-up li .label span{display:block;}
 			}
 		</style>
 
 		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
-		<link rel="stylesheet" type="text/css" href="libs/openlayers/4.4.2/ol.css">
+		<link rel="stylesheet" type="text/css" href="libs/openlayers/4.5.0/ol.css">
 		<link rel="stylesheet" type="text/css" href="libs/mapbox-gl-js/v0.41.0/mapbox-gl.css"/>
 		<link rel="stylesheet" type="text/css" href="libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	</head>
@@ -113,7 +115,7 @@
 			</div>
 		</div>
 	</body>
-    <script src="libs/openlayers/4.4.2/ol.js"></script>
+    <script src="libs/openlayers/4.5.0/ol.js"></script>
 	<script src="libs/ol-mapbox-style/olms.js"></script>
 	<script src="libs/mapbox-gl-js/v0.41.0/mapbox-gl.js"></script>
 	<script type="text/javascript">
@@ -317,7 +319,7 @@
 					loaded(json);
 				});
 			};
-			var loadStyleFile = function(url,style,loaded){
+			var loadStyleFile = function(url,style,src,loaded){
 				loadFile(url,(response)=>{
 					if (style.host && currentState.styleHost != style.host){
 						var regex = new RegExp(style.host,'g');
@@ -328,6 +330,17 @@
 					} catch(e){
 						return console.error('error parsing json from file:',url,e);
 					}
+
+					var styleSources = {};
+					for (var i in json.sources){
+						if (src.sources[i]){ // source is defined in src
+							styleSources[i] = clone(json.sources[i]);
+							for (var j in src.sources[i]){ // overwrite style sources with src source settings
+								styleSources[i][j] = src.sources[i][j];
+							}
+						}
+					}
+					json.sources = styleSources;
 					loaded(json);
 				});
 			};
@@ -421,18 +434,7 @@
 
 					if (lib.accessToken) mapboxgl.accessToken = lib.accessToken;
 
-					loadStyleFile(style.mapboxStyle,style,(styleJson)=>{
-						var styleSources = {};
-						for (var i in styleJson.sources){
-							if (src.sources[i]){ // source is defined in src
-								styleSources[i] = clone(styleJson.sources[i]);
-								for (var j in src.sources[i]){ // overwrite style sources with src source settings
-									styleSources[i][j] = src.sources[i][j];
-								}
-							}
-						}
-						styleJson.sources = styleSources;
-
+					loadStyleFile(style.mapboxStyle,style,src,(styleJson)=>{
 						//console.log('center:',center,style);
 
 						if (!this.el){
@@ -484,10 +486,7 @@
 				render:function(){
 					document.getElementById('olMap').style.display = 'block';
 
-					var style = styles[currentState.style],
-						center = ol.proj.fromLonLat([currentState.lng,currentState.lat]),
-						src = srcs[currentState.src],
-						doBind = false; // only do binding of property change on initial init of map, but after properties have been set
+					var doBind = false; // only do binding of property change on initial init of map, but after properties have been set
 
 					this.el = this.el || new ol.Map({target:'olMap'});
 
@@ -496,59 +495,82 @@
 						doBind = true;
 					}
 
-					// apply styles
-					if (this.style != currentState.style){
-						olms.apply(this.el,style.olStyle);
-					}
+					this.setStyleSrc(()=>{
+						this.setZoom();
+						this.setCenter();
+						if (doBind) this.bindMap();
 
-					// if source changed blitz layers and rebuild
-					if (this.src != currentState.src){
-						this.el.getLayers().getArray().forEach((layer)=>{
-							this.el.removeLayer(layer);
+						for (var i in currentState){
+							this[i] = currentState[i];
+						}
+					});
+				},
+				setStyleSrc:function(done){
+					if (this.style != currentState.style || 
+						this.src != currentState.src){
+
+						var style = styles[currentState.style];
+						var src = srcs[currentState.src];
+						loadStyleFile(style.olStyle,style,src,(styleJson)=>{
+							//console.log('styleJson:',styleJson);
+							var layers = [];
+							this.el.getLayers().getArray().forEach((layer)=>{
+								layers.push(layer);
+							});
+							layers.forEach((layer)=>{
+								this.el.removeLayer(layer);
+							});
+   
+							olms.apply(this.el,styleJson);
+
+							this.setRasterLayers(styleJson);
+							done();
 						});
-						for (var i in src.sources){
+						return;
+					}
+					done();
+				},
+				setRasterLayers:function(styleJson){
+					if (this.style == currentState.style && 
+						this.src == currentState.src) return;
+					var src = srcs[currentState.src];
+
+					for (var i in src.sources){
+						if (src.sources[i].type == 'raster' && styleJson.sources[i]){ // is a raster source and does exist in style sheet
 							var source = src.sources[i];
-							if (source.type == 'vector'){
-								var layer = new ol.layer.Vector({
-									source:new ol.source.Vector({
-										url:source.url,
-										format:new ol.format.GeoJSON()
-									})
-								});
-							} else if (source.type == 'raster'){
-								var layer = new ol.layer.Tile({
-									title:source.title,
-									source:new ol.source.XYZ({
-										url:source.url,
-										attribution:source.attribution
-									})
-								});
-							}
+							//console.log('add layer:',source);
+							var layer = new ol.layer.Tile({
+								title:source.title,
+								source:new ol.source.XYZ({
+									url:source.url,
+									attribution:source.attribution
+								})
+							});
 							this.el.addLayer(layer);
 						}
 					}
+				},
+				setZoom:function(){
 					if (currentState.z !== this.z){
 						this.view.setZoom(currentState.z+1);
 					}
+				},
+				setCenter:function(){
 					if (currentState.lng !== this.lng || 
 						currentState.lat !== this.lat){
+						var center = ol.proj.fromLonLat([currentState.lng,currentState.lat]);
 						this.view.setCenter(center);
 					}
-
-					if (doBind){
-						this.view.on('propertychange',(e)=>{
-							var center = this.view.getCenter();
-							var lngLat = ol.proj.toLonLat(center);
-							currentState.lng = parseDecimal(lngLat[0]);
-							currentState.lat = parseDecimal(lngLat[1]);
-							currentState.z = parseDecimal(this.view.getZoom()-1);
-							setState(currentState);
-						});
-					}
-
-					for (var i in currentState){
-						this[i] = currentState[i];
-					}
+				},
+				bindMap:function(){
+					this.view.on('propertychange',(e)=>{
+						var center = this.view.getCenter();
+						var lngLat = ol.proj.toLonLat(center);
+						currentState.lng = parseDecimal(lngLat[0]);
+						currentState.lat = parseDecimal(lngLat[1]);
+						currentState.z = parseDecimal(this.view.getZoom()-1);
+						setState(currentState);
+					});
 				},
 				clear:function(){
 					document.getElementById('olMap').style.display = 'none';

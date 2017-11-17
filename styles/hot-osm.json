@@ -34,7 +34,7 @@
         "visibility": "visible"
       },
       "paint": {
-        "background-color": "rgba(144, 204, 203, 1)"
+         "background-color": "rgba(144, 204, 203, 1)"
       }
     },
     {
@@ -44,6 +44,26 @@
       "source-layer": "land",
       "minzoom": 0,
       "maxzoom": 24,
+      "paint": {
+        "fill-color": "rgba(247, 246, 241, 1)"
+      }
+    },
+	{
+      "id": "pier",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "other_areas",
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
       "paint": {
         "fill-color": "rgba(247, 246, 241, 1)"
       }
@@ -236,7 +256,7 @@
             ],
             [
               "nature_reserve",
-              "rgba(200, 213, 169, 1)"
+              "rgba(178, 194, 157, 0.2)"
             ],
             [
               "commercial",
@@ -280,7 +300,7 @@
             ],
             [
               "nature_reserve",
-              "rgba(178, 194, 157, 1)"
+              "rgba(178, 194, 157, 0.3)"
             ],
             [
               "landfill",
@@ -396,7 +416,7 @@
       "type": "line",
       "source": "osm",
       "source-layer": "landuse_areas",
-      "minzoom": 13,
+      "minzoom": 10,
       "maxzoom": 24,
       "filter": [
         "all",
@@ -413,7 +433,7 @@
         "line-width": {
           "stops": [
             [
-              12,
+              10,
               2
             ],
             [

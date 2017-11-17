@@ -50,6 +50,26 @@
         "fill-color": "rgba(98, 117, 98, 1)"
       }
     },
+	{
+      "id": "pier",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "other_areas",
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "rgba(98, 117, 98, 1)"
+      }
+    },
     {
       "id": "landuse_areas_z13",
       "type": "fill",

@@ -50,6 +50,26 @@
         "fill-color": "rgba(98, 117, 98, 1)"
       }
     },
+	{
+      "id": "pier",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "other_areas",
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "rgba(98, 117, 98, 1)"
+      }
+    },
     {
       "id": "landuse_areas_z13",
       "type": "fill",
@@ -911,7 +931,6 @@
       "type": "symbol",
       "source": "osm",
       "source-layer": "transport_lines",
-      "minzoom": 14,
       "maxzoom": 24,
       "filter": [
         "all",
@@ -936,34 +955,40 @@
           "stops": [
             [
               14,
-              11
+              9
             ],
             [
               15,
-              14
+              10
             ]
           ]
         },
-        "icon-allow-overlap": false,
-        "icon-optional": false,
+        "icon-allow-overlap": true,
+        "icon-optional": true,
         "text-line-height": 1.2,
         "visibility": "visible",
         "text-ignore-placement": false,
         "icon-image": "camoshield6",
-        "icon-rotation-alignment": "viewport",
         "text-rotation-alignment": "viewport",
-        "text-pitch-alignment": "viewport",
-        "symbol-spacing": 500,
-        "icon-text-fit": "width",
+        "icon-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "icon-text-fit": "none",
         "icon-text-fit-padding": [
           0,
-          15,
-          2,
-          15
-        ]
+          0,
+          0,
+          0
+        ],
+        "text-max-width": 1,
+        "icon-rotate": 0
       },
       "paint": {
-        "text-color": "rgba(51, 51, 51, 1)"
+        "text-color": "rgba(51, 51, 51, 1)",
+        "icon-color": "rgba(158, 22, 22, 1)",
+        "icon-halo-color": "rgba(199, 63, 63, 1)",
+        "icon-opacity": 1,
+        "text-translate-anchor": "viewport",
+        "icon-translate-anchor": "viewport"
       }
     }
   ],

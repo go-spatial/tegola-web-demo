@@ -12,11 +12,8 @@
 		<style type="text/css">
 			*{margin:0;padding:0;box-sizing:border-box;vertical-align:middle;}
 
-			@font-face {
-			  font-family:'Open Sans';
-			  font-style:normal;
-			  font-weight:400;
-			  src:local('Open Sans Regular'),local('OpenSans-Regular'),url(fonts/open-sans-regular.woff2) format('woff2');
+			@font-face {font-family:'Open Sans';font-style:normal;font-weight:400;
+				src:local('Open Sans Regular'),local('OpenSans-Regular'),url(fonts/open-sans-regular.woff2) format('woff2');
 			}
 
 			#olMap{width:100%;height:100%;position:relative;z-index:2;}
@@ -403,8 +400,8 @@
 					document.getElementById('optionsbar').appendChild(libOption);
 				}
 
-				libs['mapbox'].client = mapboxClient;
-				libs['ol'].client = olClient;
+				if (libs['mapbox']) libs['mapbox'].client = mapboxClient;
+				if (libs['ol']) libs['ol'].client = olClient;
 			};
 			var buildLocs = function(){
 				if (!options.locs || options.locs.length < 1) return;
@@ -439,10 +436,28 @@
 					loadStyleFile(style.mapboxStyle,style,src,(styleJson)=>{
 						//console.log('center:',center,style);
 
+						var json = clone(styleJson);
+
+						/*
+						if (json.sources){
+							for (var i in json.sources){
+								var source = json.sources[i];
+								if (source.type == 'raster'){
+									source.tiles = [
+										source.url
+									];
+									delete json.sources[i].url;
+								}
+							}
+						}
+						*/
+
+						console.log('styleJson:',json);
+
 						if (!this.el){
 		  					this.el = new mapboxgl.Map({
 								container:'mapboxMap',
-								style:styleJson,
+								style:json,
 								center:center,
 								bear:currentState.bear,
 								pitch:currentState.pitch,
@@ -473,7 +488,7 @@
 							this[i] = currentState[i];
 						}
 
-						this.el.setStyle(styleJson);
+						this.el.setStyle(json);
 						this.el.setCenter(center);
 						this.el.setZoom(this.z);
 						this.el.setBearing(this.bear);

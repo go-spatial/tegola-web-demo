@@ -55,8 +55,7 @@
 			},
 			"satellite":{
 				"url":"https://api.tiles.mapbox.com/v4/digitalglobe.nal0g75k/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiZGlnaXRhbGdsb2JlIiwiYSI6ImNqNWIyMHkxdzBmNGczNG55bGNhc2tlcncifQ.lQXsl-GCFgJWmIKEeaRpPg",
-				"type":"raster",
-				"attribution":"© DigitalGlobe, Inc"
+				"type":"raster"
 			}
 		}
     }],
@@ -111,12 +110,6 @@
     	"label":"Berlin",
     	"lat":52.51,
     	"lng":13.36,
-    	"z":11
-    },{
-    	"key":"tk",
-    	"label":"Tokyo",
-    	"lat":35.69,
-    	"lng":139.73,
     	"z":11
     },{
     	"key":"tk",

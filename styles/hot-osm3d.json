@@ -675,6 +675,156 @@
         "fill-color": "rgba(144, 204, 203, 1)"
       }
     },
+	{
+      "id": "aero_taxiway_lines",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 12,
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "taxiway"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(220, 220, 220, 1)",
+        "line-width": {
+          "stops": [
+            [
+              12,
+              1
+            ],
+			[
+			  13,
+			  1.5
+			],
+            [
+              18,
+              4
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "aero_runway_lines",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 12,
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "runway"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(220, 220, 220, 1)",
+		"line-width": {
+          "stops": [
+            [
+              12,
+              1.5
+            ],
+            [
+              18,
+              25
+            ]
+          ]
+        }
+      }
+    },
+	{
+      "id": "city_county_lines",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "admin_lines",
+      "minzoom": 9,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          ">=",
+          "admin_level",
+          6
+        ],
+		[
+          "<=",
+          "admin_level",
+          8
+        ]
+	  ],	
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(210, 210, 210, 1)",
+		"line-dasharray": [
+          2,
+          2
+        ],
+		"line-width": 1.5
+      }
+    },
+	{
+      "id": "state_lines_z10",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "admin_lines",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "admin_level",
+          4
+        ]
+	  ],	
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(178, 171, 171, 1)",
+		"line-dasharray": [
+          6,
+          3
+        ],
+		"line-width": 1.5
+      }
+    },
+	{
+      "id": "state_lines_z2",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "state_lines",
+      "minzoom": 2,
+      "maxzoom": 10,
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(178, 171, 171, 1)",
+		"line-dasharray": [
+          6,
+          3
+        ],
+		"line-width": 1.5
+      }
+    },
     {
       "id": "roads_trackfillcase",
       "type": "line",
@@ -1739,18 +1889,19 @@
       }
     },
     {
-      "id": "roads_trunk_z4",
+      "id": "roads_trunk_z7",
       "type": "line",
       "source": "osm",
       "source-layer": "transport_lines",
-      "minzoom": 4,
+      "minzoom": 7,
       "maxzoom": 11,
       "filter": [
         "all",
         [
-          "==",
+          "in",
           "type",
-          "trunk"
+          "trunk",
+		  "primary"
         ]
       ],
       "layout": {
@@ -1760,10 +1911,6 @@
         "line-color": "rgba(160, 152, 176, 1)",
         "line-width": {
           "stops": [
-            [
-              5,
-              0.2
-            ],
             [
               7,
               0.3
@@ -1780,12 +1927,12 @@
         }
       }
     },
-    {
-      "id": "roads_motorway_z4",
+	{
+      "id": "roads_motorway_z7",
       "type": "line",
       "source": "osm",
       "source-layer": "transport_lines",
-      "minzoom": 4,
+      "minzoom": 7,
       "maxzoom": 11,
       "filter": [
         "all",
@@ -1803,8 +1950,88 @@
         "line-width": {
           "stops": [
             [
-              5,
-              0.4
+              7,
+              0.6
+            ],
+            [
+              8,
+              1
+            ],
+            [
+              10,
+              2
+            ]
+          ]
+        }
+      }
+    },
+	{
+      "id": "roads_motorway_z4_minzoom",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 4,
+      "maxzoom": 7,
+      "filter": [
+        "all",
+		[
+          ">",
+          "min_zoom",
+		  5
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(224, 221, 224, 1)",
+        "line-width": {
+          "stops": [
+            [
+              4,
+              0.8
+            ],
+            [
+              7,
+              1
+            ],
+            [
+              8,
+              1
+            ],
+            [
+              10,
+              2
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "roads_motorway_z4",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 4,
+      "maxzoom": 7,
+      "filter": [
+        "all",
+		[
+          "<=",
+          "min_zoom",
+		  5
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(160, 152, 176, 1)",
+        "line-width": {
+          "stops": [
+            [
+              4,
+              0.5
             ],
             [
               7,
@@ -2297,37 +2524,62 @@
         }
       }
     },
+	{
+      "id": "admin_countrylines_z10",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "admin_lines",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "admin_level",
+          2
+        ]
+	  ],	
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(129, 150, 154, 1)",
+		"line-width": {
+			"stops": [
+			  [ 0,
+				0.5
+			  ],
+			  [
+				7,
+				3
+			  ]
+			]
+		}	
+      }
+    },
     {
-      "id": "admin_countrylines",
+      "id": "admin_countrylines_z0",
       "type": "line",
       "source": "osm",
       "source-layer": "country_lines",
       "minzoom": 0,
-      "maxzoom": 20,
+      "maxzoom": 10,
       "layout": {
         "visibility": "visible"
       },
       "paint": {
-        "line-color": "rgba(83, 112, 118, 1)"
-      }
-    },
-    {
-      "id": "admin_countrylinesdisputed",
-      "type": "line",
-      "source": "osm",
-      "source-layer": "country_lines_disputed",
-      "minzoom": 0,
-      "maxzoom": 20,
-      "layout": {
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "rgba(83, 112, 118, 1)",
-        "line-dasharray": [
-          4,
-          1
-        ],
-        "line-width": 1
+        "line-color": "rgba(129, 150, 154, 1)",
+		"line-width": {
+			"stops": [
+			  [ 0,
+				0.5
+			  ],
+			  [
+				7,
+				3
+			  ]
+			]
+		}	
       }
     },
     {
@@ -2757,6 +3009,317 @@
         "text-halo-width": 1
       }
     },
+	{
+      "id": "city_labels_z14",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "admin_lines",
+      "minzoom": 14,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+		[
+          "==",
+          "admin_level",
+          8
+        ]
+	  ],	
+       "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Regular"
+        ],
+		"text-size": 10,
+		"text-transform": "uppercase",
+		"text-letter-spacing": 0.5
+      },
+      "paint": {
+        "text-color": "rgba(34, 34, 34, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "city_labels_z12",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 12,
+      "maxzoom": 14,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Populated place"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Regular"
+        ],
+		"text-size": 10,
+		"text-transform": "uppercase",
+		"text-letter-spacing": 0.5
+      },
+      "paint": {
+        "text-color": "rgba(34, 34, 34, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "city_labels_z6",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 6,
+      "maxzoom": 12,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Populated place"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Regular"
+        ],
+		"text-size": 10
+      },
+      "paint": {
+        "text-color": "rgba(34, 34, 34, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "state_labels",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "state_label_points",
+      "minzoom": 4,
+      "maxzoom": 10,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "scalerank",
+          2
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Bold Italic"
+        ],
+		"text-size": {
+		  "stops": [
+            [
+              4,
+              7
+            ],
+            [
+              10,
+              16
+            ]
+          ]
+		}  
+      },
+      "paint": {
+        "text-color": "rgba(166, 166, 170, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "statecapital_labels_z10",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Admin-1 capital"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Bold"
+        ],
+		"text-size": 10,
+		"text-transform": "uppercase"
+      },
+      "paint": {
+        "text-color": "rgba(68, 51, 85, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "statecapital_labels_z4",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 4,
+      "maxzoom": 10,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Admin-1 capital"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Bold"
+        ],
+		"text-size": {
+		  "stops": [
+            [
+              4,
+              7
+            ],
+            [
+              10,
+              10
+            ]
+          ]
+		}  
+      },
+      "paint": {
+        "text-color": "rgba(68, 51, 85, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "capital_labels_z10",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Admin-0 capital"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Bold"
+        ],
+		"text-size": 11,
+		"text-transform": "uppercase"
+      },
+      "paint": {
+        "text-color": "rgba(68, 51, 85, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "capital_labels_z3",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "populated_places",
+      "minzoom": 3,
+      "maxzoom": 10,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "featurecla",
+          "Admin-0 capital"
+        ]
+      ],
+      "layout": {
+        "text-field": "{name}",
+		"text-font": [
+          "Open Sans Bold"
+        ],
+		"text-size": {
+		  "stops": [
+            [
+              3,
+              9
+            ],
+            [
+              10,
+              11
+            ]
+          ]
+		}  
+      },
+      "paint": {
+        "text-color": "rgba(68, 51, 85, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 1
+      }
+    },
+	{
+      "id": "country_labels",
+      "type": "symbol",
+      "source": "osm",
+      "source-layer": "country_label_points",
+      "minzoom": 3,
+      "maxzoom": 7,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "scalerank",
+          0
+        ]
+      ],
+      "layout": {
+        "text-field": "{sr_subunit}",
+		"text-font": [
+          "Open Sans Bold"
+        ],
+        "text-size": {
+		  "stops": [
+            [
+              3,
+              11
+            ],
+            [
+              7,
+              13
+            ]
+          ]
+		}  
+      },
+      "paint": {
+        "text-color": "rgba(68, 51, 85, 1)",
+        "text-halo-color": "rgba(255, 255, 255, 1)",
+        "text-halo-width": 1,
+		"text-halo-blur": 5
+      }
+    },
     {
       "id": "power_lines",
       "type": "line",
@@ -2777,122 +3340,6 @@
       ],
       "paint": {
         "line-color": "rgba(164, 129, 136, 1)"
-      }
-    },
-    {
-      "id": "state_labels",
-      "type": "symbol",
-      "source": "osm",
-      "source-layer": "state_label_points",
-      "minzoom": 5,
-      "maxzoom": 11,
-      "filter": [
-        "all",
-        [
-          "==",
-          "adm0_sr",
-          1
-        ]
-      ],
-      "layout": {
-        "text-font": [
-          "Open Sans Bold Italic"
-        ],
-        "text-field": "{name}",
-        "text-size": {
-          "stops": [
-            [
-              5,
-              9
-            ],
-            [
-              7,
-              11
-            ],
-            [
-              9,
-              12
-            ],
-            [
-              13,
-              14
-            ]
-          ]
-        }
-      },
-      "paint": {
-        "text-color": "rgba(166, 166, 170, 1)",
-        "text-halo-color": "rgba(255, 255, 255, 0.35)",
-        "text-halo-width": 2,
-        "text-halo-blur": 0
-      }
-    },
-    {
-      "id": "country_labels",
-      "type": "symbol",
-      "source": "osm",
-      "source-layer": "country_label_points",
-      "minzoom": 3,
-      "maxzoom": 8,
-      "filter": [
-        "all",
-        [
-          "==",
-          "scalerank",
-          0
-        ]
-      ],
-      "layout": {
-        "text-font": [
-          "Open Sans Bold"
-        ],
-        "text-size": {
-          "stops": [
-            [
-              3,
-              9
-            ],
-            [
-              8,
-              14
-            ]
-          ]
-        },
-        "text-max-width": {
-          "stops": [
-            [
-              3,
-              40
-            ],
-            [
-              8,
-              80
-            ]
-          ]
-        },
-        "text-letter-spacing": {
-          "stops": [
-            [
-              3,
-              0
-            ],
-            [
-              7,
-              1
-            ],
-            [
-              8,
-              1
-            ]
-          ]
-        },
-        "text-field": "{name}"
-      },
-      "paint": {
-        "text-color": "rgba(68, 51, 85, 1)",
-        "text-halo-width": 1,
-        "text-halo-color": "rgba(255, 255, 255, 1)",
-        "text-halo-blur": 38
       }
     },
     {
@@ -3257,7 +3704,7 @@
         "text-halo-width": 0.5,
         "text-halo-blur": 1
       }
-    }	
+    }
   ],
   "id": "ciwf4zbsv007y2pmt2rspc1dc",
   "owner": ""

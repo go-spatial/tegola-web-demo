@@ -21,8 +21,8 @@
       "url": "https://osm.tegola.io/capabilities/osm.json"
     }
   },
-  "sprite": "http://demo.tegola.io/spritesets/osm_tegola_spritesheet",
-  "glyphs": "http://demo.tegola.io/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://go-spatial.github.io/carto-assets/spritesets/osm_tegola_spritesheet",
+  "glyphs": "https://go-spatial.github.io/carto-assets/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",

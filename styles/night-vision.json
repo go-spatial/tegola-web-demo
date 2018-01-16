@@ -24,8 +24,8 @@
       "type": "raster"
     }
   },
-  "sprite": "http://demo.tegola.io/spritesets/osm_tegola_spritesheet",
-  "glyphs": "http://demo.tegola.io/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://go-spatial.github.io/carto-assets/spritesets/osm_tegola_spritesheet",
+  "glyphs": "https://go-spatial.github.io/carto-assets/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
@@ -45,7 +45,7 @@
       "source-layer": "land",
 	  "maxzoom": 10,
       "layout": {
-        "visibility": "vsiible"
+        "visibility": "visible"
       },
       "paint": {
 		"fill-color": "rgba(51, 51, 51, 0.6)"

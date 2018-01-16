@@ -26,8 +26,8 @@
       "url": "https://osm.tegola.io/capabilities/osm.json"
     }
   },
-  "sprite": "http://demo.tegola.io/spritesets/osm_tegola_spritesheet",
-  "glyphs": "http://demo.tegola.io/fonts/{fontstack}/{range}.pbf",
+  "sprite": "https://go-spatial.github.io/carto-assets/spritesets/osm_tegola_spritesheet",
+  "glyphs": "https://go-spatial.github.io/carto-assets/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
@@ -108,6 +108,82 @@
       },
       "paint": {
         "fill-color": "rgba(191, 191, 191, 1)"
+      }
+    },
+	{
+      "id": "state_lines_10",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "admin_lines",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "admin_level",
+          4
+        ]
+	  ],	
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(240, 240, 241, 1)",
+		"line-dasharray": [
+          6,
+          3
+        ],
+		"line-width": {
+          "stops": [
+            [
+              2.5,
+              0.4
+            ],
+			[
+			  3,
+			  1
+			],
+            [
+              4,
+              1.5
+            ]
+          ]
+        }
+      }
+    },
+	{
+      "id": "state_lines_z2",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "state_lines",
+      "minzoom": 2,
+      "maxzoom": 20,
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(240, 240, 241, 1)",
+		"line-dasharray": [
+          6,
+          3
+        ],
+		"line-width": {
+          "stops": [
+            [
+              2.5,
+              0.4
+            ],
+			[
+			  3,
+			  1
+			],
+            [
+              4,
+              1.5
+            ]
+          ]
+        }
       }
     },
     {
@@ -563,6 +639,63 @@
         "text-halo-color": "rgba(228, 232, 228, 1)",
         "text-halo-width": 2,
         "text-color": "rgba(0, 58, 64, 0.9)"
+      }
+    },
+	{
+      "id": "admin_countrylines_z10",
+      "type": "line",
+      "source": "osm",
+       "source-layer": "admin_lines",
+      "minzoom": 10,
+      "maxzoom": 20,
+	  "filter": [
+        "all",
+        [
+          "==",
+          "admin_level",
+          2
+        ]
+	  ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(0, 58, 64, 1)",
+		"line-width": 2
+      }
+    },
+    {
+      "id": "admin_countrylines_z0",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "country_lines",
+      "minzoom": 0,
+      "maxzoom": 10,
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(0, 58, 64, 1)",
+		"line-width": 2
+      }
+    },
+    {
+      "id": "admin_countrylinesdisputed",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "country_lines_disputed",
+      "minzoom": 0,
+      "maxzoom": 20,
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(0, 58, 64, 1)",
+        "line-dasharray": [
+          4,
+          1
+        ],
+        "line-width": 1
       }
     },
     {

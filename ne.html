@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Tegola Demo Viewer</title>
+
+		<script type="application/json" id="config">
+		    {
+		    	"path":"neConfig.json"
+		    }
+		</script>
+		<style type="text/css">
+			*{margin:0;padding:0;box-sizing:border-box;vertical-align:middle;}
+
+			@font-face {font-family:'Open Sans';font-style:normal;font-weight:400;
+				src:local('Open Sans Regular'),local('OpenSans-Regular'),url(fonts/open-sans-regular.woff2) format('woff2');
+			}
+
+			#olMap{width:100%;height:100%;position:relative;z-index:2;}
+			#mapboxMap{width:100%;height:100%;position:relative;z-index:1;}
+			#stylebar{position:fixed;bottom:0;left:0;color:#333;margin:16px;
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				z-index:3;
+			}
+			#optionsbar{position:fixed;bottom:0;right:0;color:#333;margin:16px;
+				-webkit-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				-moz-box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				box-shadow:3px 7px 8px -10px rgba(0,0,0,0.8);
+				z-index:3;
+			}
+
+			.tool{font-family:'Open Sans',sans-serif;float:left;background-color:rgba(255,255,255,1);
+				border:1px solid #E9EDEF;position:relative;font-size:16px;
+				cursor:pointer;border-left:none;}
+			.tool:first-child{border-left:1px solid #E9EDEF;border-top-left-radius:4px;border-bottom-left-radius:4px;}
+			.tool:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px;}
+			.tool:hover{background-color:#D9EAFB;border-color:#E1E9F1;}
+			.tool.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
+			
+			.tool .tile{width:38px;height:38px;line-height:36px;border-radius:2px;
+				position:relative;margin:3px;display:inline-block;
+				border:1px solid rgba(255,255,255,0.3);opacity:0.85;}
+			.tool:hover .tile{opacity:1;}
+			.tool.active .tile{opacity:1;}
+			.tool .label{line-height:40px;height:40px;
+				margin:2px 14px 2px 12px;display:inline-block;}
+			.tool .label i{position:relative;top:0;}
+			#optionsbar .tool .label{position:relative;top:-2px;}
+			#optionsbar .label span{margin-left:3px;}
+			#optionsbar .tool .label{margin:2px 14px 2px 14px;}
+			
+			.drop-up{position:absolute;bottom:48px;right:-1px;
+				list-style-type:none;margin:0;padding:0;}
+			.drop-up li{display:block;position:relative;margin:0;padding:0;border-top:1px solid #E9EDEF;
+				border-left:1px solid #E9EDEF;border-right:1px solid #E9EDEF;background-color:#fff;
+				min-width:160px;overflow:hidden;}
+			.drop-up li:first-child{border-top-left-radius:4px;border-top-right-radius:4px;}
+			.drop-up li:last-child{border-bottom:1px solid #E9EDEF;
+				border-bottom-left-radius:4px;border-bottom-right-radius:0;}
+			.drop-up li:hover{background-color:#D9EAFB;border-color:#E1E9F1;}
+			.drop-up li.active{background-color:#548DC3;border-color:#6899D5;color:#fff;}
+			.drop-up li .tile{position:absolute;margin:2px;}
+			.drop-up li .label{line-height:44px;margin:2px 14px 2px 12px;}
+
+			.display-none{display:none;}
+
+			@media only screen and (max-width:1000px) {
+				#stylebar{margin:12px;}
+				#stylebar .label{display:none;}
+				#optionsbar{margin:12px;}
+				#optionsbar .label span{display:none;}
+				#optionsbar .drop-up li .label span{display:block;}
+			}
+		</style>
+
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+		<link rel="stylesheet" type="text/css" href="libs/openlayers/4.5.0/ol.css">
+		<link rel="stylesheet" type="text/css" href="libs/mapbox-gl-js/v0.41.0/mapbox-gl.css"/>
+		<link rel="stylesheet" type="text/css" href="libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+	<body>
+		<div id="mapContainer">
+			<div id="mapboxMap" class="display-none" onclick="dropClear();"></div>
+			<div id="olMap" class="display-none" onclick="dropClear();"></div>
+			<div id="stylebar" class="display-none"></div>
+			<div id="optionsbar">
+			</div>
+			<div id="liboption" class="tool display-none" onclick="clickDropToggle('libbar');">
+				<div class="label">
+					<i class="fa fa-fw fa-fw fa-cubes" aria-hidden="true"></i> 
+					<span id="libLabel"></span>
+				</div>
+				<ul id="libbar" class="drop-up display-none">
+				</ul>
+			</div>
+			<div id="srcoption" class="tool display-none" onclick="clickDropToggle('srcbar');">
+				<div class="label">
+					<i class="fa fa-fw fa-server" aria-hidden="true"></i> 
+					<span id="srcLabel"></span>
+				</div>
+				<ul id="srcbar" class="drop-up display-none">
+				</ul>
+			</div>
+			<div id="locoption" class="tool display-none" onclick="clickDropToggle('locbar');">
+				<div class="label">
+					<i class="fa fa-fw fa-crosshairs no-mr" aria-hidden="true"></i>
+				</div>
+				<ul id="locbar" class="drop-up display-none">
+				</ul>
+			</div>
+		</div>
+	</body>
+    <script src="libs/openlayers/4.5.0/ol.js"></script>
+	<script src="libs/ol-mapbox-style/olms.js"></script>
+	<script src="libs/mapbox-gl-js/v0.41.0/mapbox-gl.js"></script>
+	<script type="text/javascript">
+		'use strict';
+
+		(()=>{
+			var styles = {}, srcs = {}, libs = {}, locs = {},
+				currentState = {}, options = {};
+
+			var queryOldToNew = {
+				latitude:'lat',
+				longitude:'lng',
+				bearing:'bear',
+				pitch:'pitch',
+				source:'src',
+				theme:'style',
+				renderer:'lib',
+				zoom:'z'
+			};
+
+			var initApp = function(){
+				//check for required options
+				//console.log('options:',options);
+				if (!options.start) return console.error('options: no start defined');
+				if (!options.styles) return console.error('options: no styles defined');
+				if (!options.srcs) return console.error('options: no srcs defined');
+				if (!options.libs) return console.error('options: no libs defined');
+
+				currentState = getState();
+
+				//console.log('current state:',currentState);
+
+				window.addEventListener("resize",()=>{
+					windowResize();
+				});
+				windowResize();
+
+				buildStyles();
+				buildLocs();
+				buildSrcs();
+				buildLibs();
+				
+				setStyle(currentState.style);
+				setSrc(currentState.src);
+				setLib(currentState.lib);
+
+				updateMap();
+			};
+			var windowResize = function(){
+				document.getElementById('mapboxMap').style.height = window.innerHeight+'px';
+				document.getElementById('olMap').style.height = window.innerHeight+'px';
+			};
+			var getState = function(){
+				var query = parseQuery();
+				var q = {};
+
+				for (var i in query){
+					if (queryOldToNew[i]) query[queryOldToNew[i]] = query[i];
+				}
+
+				q.z = +query.z || options.start.z;
+				q.lat = +query.lat || options.start.lat;
+				q.lng = +query.lng || options.start.lng;
+				q.bear = +query.bear || options.start.bear;
+				q.pitch = +query.pitch || options.start.pitch;
+				q.style = query.style || options.start.style;
+				q.src = query.src || options.start.src;
+				q.lib = query.lib || options.start.lib;
+				if (query.styleHost) q.styleHost = query.styleHost;
+				return q;
+			};
+			var setState = function(state){
+				var set = clone(state);
+				if (set.bear == 0) delete set.bear;
+				if (set.pitch == 0) delete set.pitch;
+				var query = makeQuery(set);
+				window.history.pushState(undefined,'posUpdate',query);
+			};
+			var parseQuery = function(){
+				var url = window.location.href,
+					query = {},
+					qInd = url.indexOf('?');
+				if (qInd === -1) return query;
+				var props = url.slice(qInd+1).split('&');
+			    for(var i=0,len=props.length;i<len;i++){
+			        var prop = props[i].split('=');
+			        query[prop[0]] = decodeURIComponent(prop[1]);
+			    }
+			    return query;
+			};
+			var makeQuery = function(state){
+				var parts = [];
+				var write = clone(state);
+				for (var i in write){
+					if (getType(write[i]) == 'num') write[i] = write[i].toString();
+					parts.push(i+'='+encodeURIComponent(write[i]));
+				}
+				if (parts.length < 1) return '';
+			    return '?'+parts.join('&');
+			};
+			var elFromStr = function(str){
+				var div = document.createElement('div');
+				div.innerHTML = str;
+				return div.firstChild;
+			};
+			var getType = function(d){
+				if (d === undefined) return 'und';
+				if (d === null) return 'null';
+				if (d === true || d === false) return 'bool';
+				var t = typeof d;
+				if (t == 'string') return 'str';
+				if (t == 'number') return 'num';
+				if (t == 'function') return 'fun';
+				if (Object.prototype.toString.call(d) == '[object Array]') return 'ary';
+				return 'obj';
+			};
+			var clone = function(obj){
+				if (arguments.length == 0) obj = this;
+				if (getType(obj) !== 'obj') return console.error('clone: argument must be type object');
+				var obj2 = {};
+				for (var i in obj){
+					if (getType(obj[i]) == 'obj'){
+						obj2[i] = clone(obj[i]);
+						continue;
+					}
+					if (getType(obj[i]) == 'ary'){
+						obj2[i] = [];
+						obj[i].forEach((val)=>{
+							obj2[i].push(val);
+						});
+						continue;
+					}
+					obj2[i] = obj[i];
+				}
+				return obj2;
+			};
+			var setStyle = function(key){
+				var style = styles[key];
+				if (!style) return console.error('style:',key,' not found');
+				for (var i in styles){
+					styles[i].el.className = styles[i].el.className.replace(' active','');
+				}
+				style.el.className = style.el.className+' active';
+				currentState.style = key;
+			};
+			var setSrc = function(key){
+				var src = srcs[key];
+				if (!src) return console.error('src:',key,' not found');
+				for (var i in srcs){
+					srcs[i].el.className = srcs[i].el.className.replace(' active','');
+				}
+				src.el.className = src.el.className+' active';
+				document.getElementById('srcLabel').innerHTML = src.label;
+				currentState.src = key;
+			};
+			var setLib = function(key){
+				var lib = libs[key];
+				if (!lib) return console.error('lib:',key,' not found');
+				for (var i in libs){
+					libs[i].el.className = libs[i].el.className.replace(' active','');
+				}
+				lib.el.className = lib.el.className+' active';
+				document.getElementById('libLabel').innerHTML = lib.label;
+				if (currentState.lib && currentState.lib != key){
+					libs[currentState.lib].client.clear();
+				}
+				currentState.lib = key;
+			};
+			var setLoc = function(key){
+				var loc = locs[key];
+				if (!loc) return console.error('loc:',key,' not found');
+				currentState.lat = loc.lat;
+				currentState.lng = loc.lng;
+				currentState.z = loc.z;
+			};
+			var updateMap = function(){
+				if (!currentState.lib) return console.error('no lib defined');
+				var lib = libs[currentState.lib];
+				lib.client.render();
+			};
+			var loadFile = function(url,loaded){
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url);
+				var a = document.createElement('A');
+				a.href = url;
+				xhr.addEventListener('load',()=>{
+					loaded(xhr.responseText);
+				});
+				xhr.addEventListener('error', function () {
+					console.error('error loading file:',url);
+				});
+				xhr.send();
+			};
+			var loadJsonFile = function(url,loaded){
+				loadFile(url,(response)=>{
+					try{
+						var json = JSON.parse(response);
+					} catch(e){
+						return console.error('error parsing json from file:',url,e);
+					}
+					loaded(json);
+				});
+			};
+			var loadStyleFile = function(url,style,src,loaded){
+				loadFile(url,(response)=>{
+					if (style.host && currentState.styleHost && currentState.styleHost != style.host){
+						var regex = new RegExp(style.host,'g');
+						response = response.replace(regex,currentState.styleHost);
+					}
+					try{
+						var json = JSON.parse(response);
+					} catch(e){
+						return console.error('error parsing json from file:',url,e);
+					}
+
+					//console.log('styleJson:',json);
+
+					var styleSources = {};
+					for (var i in json.sources){
+						if (src.sources[i]){ // source is defined in src
+							styleSources[i] = clone(json.sources[i]);
+							for (var j in src.sources[i]){ // overwrite style sources with src source settings
+								styleSources[i][j] = src.sources[i][j];
+							}
+						}
+					}
+					json.sources = styleSources;
+					loaded(json);
+				});
+			};
+
+			// options.start.styleHost
+
+			var parseDecimal = function(dec){
+				return Number(dec.toFixed(4));
+			};
+			var buildStyles = function(){
+				options.styles.forEach((config,ind)=>{
+					var style = clone(config);
+
+					var html = '<div class="tool" onclick="clickSetTheme(\''+style.key+'\');">';
+					html += '<div class="tile" style="background:url('+style.tileSrc+');"></div>';
+					html += '<div class="label">'+style.label+'</div>';
+					html += '</div>';
+
+					style.el = elFromStr(html);
+					document.getElementById('stylebar').appendChild(style.el);
+					styles[style.key] = style;
+				});
+				if (options.styles.length > 1) document.getElementById('stylebar').style.display = 'block';
+			};
+			var buildSrcs = function(){
+				options.srcs.forEach((config,ind)=>{
+					var src = clone(config);
+
+					var html = '<li onclick="clickSetSource(\''+src.key+'\');">';
+					html += '<div class="label">'+src.label+'</div>';
+					html += '</li>';
+
+					src.el = elFromStr(html);
+					document.getElementById('srcbar').appendChild(src.el);
+					srcs[src.key] = src;
+				});
+				if (options.srcs.length > 1){
+					var srcOption = document.getElementById('srcoption');
+					srcOption.style.display = 'block';
+					document.getElementById('optionsbar').appendChild(srcOption);
+				}
+			};
+			var buildLibs = function(){
+				options.libs.forEach((config,ind)=>{
+					var lib = clone(config);
+
+					var html = '<li onclick="clickSetLib(\''+lib.key+'\');">';
+					html += '<div class="label"> '+lib.label+'</div>';
+					html += '</li>';
+
+					lib.el = elFromStr(html);
+					document.getElementById('libbar').appendChild(lib.el);
+					libs[lib.key] = lib;
+				});
+				if (options.libs.length > 1){
+					var libOption = document.getElementById('liboption');
+					libOption.style.display = 'block';
+					document.getElementById('optionsbar').appendChild(libOption);
+				}
+
+				if (libs['mapbox']) libs['mapbox'].client = mapboxClient;
+				if (libs['ol']) libs['ol'].client = olClient;
+			};
+			var buildLocs = function(){
+				if (!options.locs || options.locs.length < 1) return;
+				options.locs.forEach((config,ind)=>{
+					var loc = clone(config);
+
+					var html = '<li onclick="clickSetLoc(\''+loc.key+'\');">';
+					html += '<div class="label"> '+loc.label+'</div>';
+					html += '</li>';
+
+					loc.el = elFromStr(html);
+					document.getElementById('locbar').appendChild(loc.el);
+					locs[loc.key] = loc;
+				});
+				var locOption = document.getElementById('locoption');
+				locOption.style.display = 'block';
+				document.getElementById('optionsbar').appendChild(locOption);
+			};
+			var mapboxClient = {
+				render:function(){
+					document.getElementById('mapboxMap').style.display = 'block';
+
+					var style = styles[currentState.style];
+					var lib = libs[currentState.lib];
+					var src = srcs[currentState.src];
+					var center = [currentState.lng,currentState.lat];
+
+					//console.log('src:',src,srcs,currentState.src);
+
+					if (lib.accessToken) mapboxgl.accessToken = lib.accessToken;
+
+					loadStyleFile(style.mapboxStyle,style,src,(styleJson)=>{
+						//console.log('center:',center,style);
+
+						var json = clone(styleJson);
+
+						/*
+						if (json.sources){
+							for (var i in json.sources){
+								var source = json.sources[i];
+								if (source.type == 'raster'){
+									source.tiles = [
+										source.url
+									];
+									delete json.sources[i].url;
+								}
+							}
+						}
+						*/
+
+						console.log('styleJson:',json);
+
+						if (!this.el){
+		  					this.el = new mapboxgl.Map({
+								container:'mapboxMap',
+								style:json,
+								center:center,
+								bear:currentState.bear,
+								pitch:currentState.pitch,
+								zoom:currentState.z,
+								maxZoom:options.maxZoom,
+								minZoom:options.minZoom
+							});
+							this.el.on('render',()=>{
+								var center = this.el.getCenter();
+								currentState.lng = parseDecimal(center.lng);
+								currentState.lat = parseDecimal(center.lat);
+								currentState.z = parseDecimal(this.el.getZoom());
+								currentState.pitch = this.el.getPitch();
+								currentState.bear = this.el.getBearing();
+								setState(currentState);
+							});
+							this.el.addControl(new mapboxgl.NavigationControl());
+							return;
+						}
+
+						var changed = false;
+						for (var i in currentState){
+							if (currentState[i] !== this[i]){
+								changed = true;
+								break;
+							}
+						}
+						if (!changed) return;
+						for (var i in currentState){
+							this[i] = currentState[i];
+						}
+
+						this.el.setStyle(json);
+						this.el.setCenter(center);
+						this.el.setZoom(this.z);
+						this.el.setBearing(this.bear);
+						this.el.setPitch(this.pitch);
+					});	
+				},
+				clear:function(){
+					document.getElementById('mapboxMap').style.display = 'none';
+				}
+			};
+			var olClient = {
+				render:function(){
+					document.getElementById('olMap').style.display = 'block';
+
+					var doBind = false; // only do binding of property change on initial init of map, but after properties have been set
+
+					this.el = this.el || new ol.Map({target:'olMap'});
+
+					if (!this.view){
+						this.view = this.el.getView();
+						doBind = true;
+					}
+
+					this.setStyleSrc(()=>{
+						this.setZoom();
+						this.setCenter();
+						if (doBind) this.bindMap();
+
+						for (var i in currentState){
+							this[i] = currentState[i];
+						}
+					});
+				},
+				setStyleSrc:function(done){
+					if (this.style != currentState.style || 
+						this.src != currentState.src){
+
+						var style = styles[currentState.style];
+						var src = srcs[currentState.src];
+						loadStyleFile(style.olStyle,style,src,(styleJson)=>{
+							//console.log('styleJson:',styleJson);
+							var layers = [];
+							this.el.getLayers().getArray().forEach((layer)=>{
+								layers.push(layer);
+							});
+							layers.forEach((layer)=>{
+								this.el.removeLayer(layer);
+							});
+   
+							olms.apply(this.el,styleJson);
+
+							this.setRasterLayers(styleJson);
+							done();
+						});
+						return;
+					}
+					done();
+				},
+				setRasterLayers:function(styleJson){
+					if (this.style == currentState.style && 
+						this.src == currentState.src) return;
+					var src = srcs[currentState.src];
+
+					for (var i in src.sources){
+						if (src.sources[i].type == 'raster' && styleJson.sources[i]){ // is a raster source and does exist in style sheet
+							var source = src.sources[i];
+							//console.log('add layer:',source);
+							var layer = new ol.layer.Tile({
+								title:source.title,
+								source:new ol.source.XYZ({
+									url:source.url,
+									attribution:source.attribution
+								})
+							});
+							this.el.addLayer(layer);
+						}
+					}
+				},
+				setZoom:function(){
+					if (currentState.z !== this.z){
+						this.view.setZoom(currentState.z+1);
+					}
+				},
+				setCenter:function(){
+					if (currentState.lng !== this.lng || 
+						currentState.lat !== this.lat){
+						var center = ol.proj.fromLonLat([currentState.lng,currentState.lat]);
+						this.view.setCenter(center);
+					}
+				},
+				bindMap:function(){
+					this.view.on('propertychange',(e)=>{
+						var center = this.view.getCenter();
+						var lngLat = ol.proj.toLonLat(center);
+						currentState.lng = parseDecimal(lngLat[0]);
+						currentState.lat = parseDecimal(lngLat[1]);
+						currentState.z = parseDecimal(this.view.getZoom()-1);
+						setState(currentState);
+					});
+				},
+				clear:function(){
+					document.getElementById('olMap').style.display = 'none';
+				}
+			};
+
+			window.clickSetTheme = function(key){
+				setStyle(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetSource = function(key){
+				setSrc(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetLib = function(key){
+				setLib(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickSetLoc = function(key){
+				setLoc(key);
+				setState(currentState);
+				updateMap();
+			};
+			window.clickToggle = function(id){
+				var toggle = document.getElementById(id);
+				if (toggle.style.display == 'block'){
+					// hide all other drops
+					toggle.style.display = 'none';
+				} else {
+					toggle.style.display = 'block';
+				}
+			};
+
+			var prevDrop;
+			window.clickDropToggle = function(id){
+				var drop = document.getElementById(id);
+				if (drop.style.display == 'block'){
+					drop.style.display = 'none';
+				} else {
+					// hide all other drops
+					if (prevDrop) prevDrop.style.display = 'none';
+
+					//apply click handler on rest of body to cancel out of drop
+					drop.style.display = 'block';
+					prevDrop = drop;
+				}
+			};
+
+			window.dropClear = function(){
+				if (prevDrop) prevDrop.style.display = 'none';
+			};
+
+			try {
+				var config = JSON.parse(document.getElementById('config').innerHTML);
+			} catch(e){
+				return console.error('error parsing config JSON:',e);
+			}
+
+			if (config.path){
+				loadJsonFile(config.path,(json)=>{
+					options = json;
+
+					options.maxZoom = (options.maxZoom !== undefined)? options.maxZoom: 22;
+					options.minZoom = (options.minZoom !== undefined)? options.minZoom: 0;
+
+					console.log('maxZoom:',options.maxZoom);
+
+					initApp();
+				});
+			} else {
+				options = config;
+				initApp();
+			}
+
+		})();
+
+	</script>
+	
+</html>
+

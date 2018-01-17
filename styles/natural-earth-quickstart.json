@@ -17,7 +17,7 @@
   "bearing": 0,
   "pitch": 0,
   "sources": { 
-    "ne": {
+    "osm": {
       "type": "vector",
       "url": "https://ne.tegola.io/capabilities/ne.json"
     }
@@ -28,7 +28,7 @@
 	{
 	  "id": "background",
 	  "type": "background",
-	  "source": "ne",
+	  "source": "osm",
 	  "source-layer": "ocean",
 	  "paint": {
 		"background-color": "rgba(225, 225, 225, 1)"
@@ -37,7 +37,7 @@
 	{
       "id": "ocean",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "ocean",
       "paint": {
         "fill-color": "rgba(163, 209, 240, 1)"
@@ -46,7 +46,7 @@
     {
       "id": "land",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "land",
       "paint": {
         "fill-color": "rgba(225, 225, 225, 1)"
@@ -55,7 +55,7 @@
 	{
       "id": "glaciated_areas",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "glaciated_areas",
       "paint": {
         "fill-color": "rgba(246, 246, 246, 1)"
@@ -64,7 +64,7 @@
 	{
       "id": "lakes_europe_alkaline",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "min_zoom": 6,
 	  "filter": [
@@ -82,7 +82,7 @@
 	{
       "id": "lakes_europe",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_europe",
 	  "minzoom": 6,
 	  "filter": [
@@ -100,7 +100,7 @@
 	{
       "id": "lakes__europe_alkaline_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_europe",
 	  "min_zoom": 6,
 	  "filter": [
@@ -119,7 +119,7 @@
 	{
       "id": "lakes_europe_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_europe",
 	  "minzoom": 6,
 	  "filter": [
@@ -138,7 +138,7 @@
 	{
       "id": "lakes_north_america_alkaline",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "min_zoom": 6,
 	  "filter": [
@@ -156,7 +156,7 @@
 	{
       "id": "lakes_north_america",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "minzoom": 6,
 	  "filter": [
@@ -174,7 +174,7 @@
 	{
       "id": "lakes__north_america_alkaline_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "min_zoom": 6,
 	  "filter": [
@@ -193,7 +193,7 @@
 	{
       "id": "lakes_north_america_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "minzoom": 6,
 	  "filter": [
@@ -212,7 +212,7 @@
 	{
       "id": "lakes_alkaline",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes",
 	  "min_zoom": 4,
 	  "filter": [
@@ -230,7 +230,7 @@
 	{
       "id": "lakes",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes",
 	  "filter": [
         "all",
@@ -247,7 +247,7 @@
 	{
       "id": "lakes_alkaline_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes",
 	  "min_zoom": 4,
 	  "filter": [
@@ -266,7 +266,7 @@
 	{
       "id": "lakes_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes",
 	  "filter": [
         "all",
@@ -284,7 +284,7 @@
 	{
       "id": "antarctic_ice_shelves_polys",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "antarctic_ice_shelves_polys",
       "paint": {
         "fill-color": "rgba(246, 246, 246, 1)"
@@ -293,7 +293,7 @@
 	{
       "id": "antarctic_ice_shelves_lines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "antarctic_ice_shelves_lines",
 	  "minzoom": 2,
       "paint": {
@@ -304,7 +304,7 @@
 	{
       "id": "urban_areas",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "urban_areas",
       "paint": {
         "fill-color": "rgba(240, 217, 152, 1)"
@@ -313,7 +313,7 @@
 	{
       "id": "parks_and_protected_lands_area",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "parks_and_protected_lands_area",
       "paint": {
         "fill-color": "rgba(193, 225, 172, 1)"
@@ -322,7 +322,7 @@
 	{
       "id": "parks_and_protected_lands_line",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "parks_and_protected_lands_line",
       "paint": {
         "line-color": "rgba(193, 225, 172, 1)",
@@ -332,7 +332,7 @@
 	{
       "id": "coastline",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "coastline",
 	  "maxzoom": 8,
       "paint": {
@@ -343,7 +343,7 @@
 	{
       "id": "boundary_lines_maritime",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "boundary_lines_maritime",
       "paint": {
         "line-color": "rgba(101, 189, 215, 1)",
@@ -353,7 +353,7 @@
 	{
       "id": "rivers_north_america",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_north_america",
 	  "minzoom": 7,
       "paint": {
@@ -364,7 +364,7 @@
 	{
       "id": "rivers_europe",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_europe",
 	  "minzoom": 7,
       "paint": {
@@ -375,7 +375,7 @@
 	{
       "id": "rivers_lake_centerlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_lake_centerlines",
 	  "maxzoom": 5,
       "paint": {
@@ -386,7 +386,7 @@
 	{
       "id": "rivers_lake_centerlines_scale_rank_z8",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_lake_centerlines_scale_rank",
 	  "minzoom": 8,
 	  "maxzoom": 10,
@@ -399,7 +399,7 @@
 	{
       "id": "rivers_lake_centerlines_scale_rank_z7",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_lake_centerlines_scale_rank",
 	  "minzoom": 7,
 	  "maxzoom": 8,
@@ -412,7 +412,7 @@
 	{
       "id": "rivers_lake_centerlines_scale_rank_z5",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_lake_centerlines_scale_rank",
 	  "minzoom": 5,
 	  "maxzoom": 7,
@@ -425,7 +425,7 @@
 	{
       "id": "admin_0_boundary_lines_disputed2",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "boundary_lines_disputed",
 	  "minzoom": 3,
       "paint": {
@@ -451,7 +451,7 @@
 	{
       "id": "admin_0_boundary_lines_disputed1",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "boundary_lines_land",
 	  "minzoom": 2,
 	  "filter": [
@@ -486,7 +486,7 @@
 	{
       "id": "admin_1_lines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "admin_1_lines",
 	  "minzoom": 2,
       "paint": {
@@ -508,7 +508,7 @@
     {
       "id": "admin_0_boundary_lines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "boundary_lines_land",
 	  "minzoom": 1,
 	  "filter": [
@@ -539,7 +539,7 @@
 	{
       "id": "reefs",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "reefs",
       "paint": {
         "line-color": "rgba(123, 182, 220, 1)",
@@ -549,7 +549,7 @@
 	{
       "id": "minor_islands",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "minor_islands",
       "paint": {
         "fill-color": "rgba(207, 207, 207, 1)"        
@@ -558,7 +558,7 @@
 	{
       "id": "playas",
       "type": "fill",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "playas",
 	  "min_zoom": 5,
       "paint": {
@@ -568,7 +568,7 @@
 	{
       "id": "playas_outlines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "playas",
 	  "minzoom": 5,
       "paint": {
@@ -594,7 +594,7 @@
 	{
       "id": "lakes_historic",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_historic",
       "paint": {
         "line-color": "rgba(61, 155, 217, 1)",
@@ -619,7 +619,7 @@
 	{
       "id": "geographic_lines",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "geographic_lines",
 	  "minzoom": 4,
       "paint": {
@@ -645,7 +645,7 @@
 	{
       "id": "roads_ferry",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "roads",
 	  "filter": [
         "all",
@@ -674,7 +674,7 @@
 	{
       "id": "roads",
       "type": "line",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "roads",
 	  "filter": [
         "all",
@@ -703,7 +703,7 @@
 	{
       "id": "lakes_north_america_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_north_america",
 	  "min_zoom": 6,
       "layout": {
@@ -737,7 +737,7 @@
 	{
       "id": "lakes__europe_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes_europe",
 	  "min_zoom": 6,
       "layout": {
@@ -771,7 +771,7 @@
 	{
       "id": "lakes_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "lakes",
       "layout": {
         "text-field": "{name}",
@@ -804,7 +804,7 @@
 	{
       "id": "rivers_north_america_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_north_america",
 	  "minzoom": 7,
 	  "filter": [
@@ -847,7 +847,7 @@
 	{
       "id": "rivers_europe_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_europe",
 	  "minzoom": 7,
 	  "filter": [
@@ -890,7 +890,7 @@
 	{
       "id": "rivers_lake_centerlines_scale_rank_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "rivers_lake_centerlines_scale_rank",
 	  "filter": [
         "all",
@@ -932,7 +932,7 @@
 	{
       "id": "geographic_lines_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "geographic_lines",
 	  "min_zoom": 4,
       "layout": {
@@ -967,7 +967,7 @@
 	{
       "id": "roads_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "roads",
 	  "min_zoom": 6,
       "layout": {
@@ -1002,7 +1002,7 @@
 	{
       "id": "geography_regions_polys_labels_main",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "geography_regions_polys",
 	  "min_zoom": 6,
 	  "filter": [
@@ -1044,7 +1044,7 @@
 	{
       "id": "geography_regions_polys_labels_minor",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "geography_regions_polys",
 	  "min_zoom": 7,
 	  "filter": [
@@ -1086,7 +1086,7 @@
 	{
       "id": "elevation_points_icons",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "elevation_points",
       "layout": {
         "icon-image": "ne_geography_regions_elevation_points",
@@ -1109,7 +1109,7 @@
 	{
       "id": "geography_regions_points_icons",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "geography_regions_points",
       "layout": {
         "icon-image": "ne_geography_regions_points",
@@ -1132,7 +1132,7 @@
 	{
       "id": "park_icons",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "parks_and_protected_lands_point",
 	  "maxzoom": 8,
       "layout": {
@@ -1146,7 +1146,7 @@
 	{
       "id": "park_icons_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "parks_and_protected_lands_point",
 	  "minzoom": 8,
       "layout": {
@@ -1170,7 +1170,7 @@
 	{
       "id": "populated_places_icons",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "populated_places",
       "layout": {
         "icon-image": "ne_{featurecla}",
@@ -1193,7 +1193,7 @@
 	{
       "id": "state_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "state_label_points",
       "minzoom": 4,
       "maxzoom": 10,
@@ -1230,7 +1230,7 @@
 	{
       "id": "country_labels",
       "type": "symbol",
-      "source": "ne",
+      "source": "osm",
       "source-layer": "country_label_points",
       "minzoom": 3,
       "maxzoom": 7,

@@ -103,6 +103,39 @@
         "fill-color": "rgba(27, 37, 52, 1)"
       }
     },
+	{
+      "id": "pier_line",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "other_lines",
+      "minzoom": 12,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(198, 201, 193, 1)",
+        "line-width": {
+          "stops": [
+            [
+              12,
+              2
+            ],
+            [
+              18,
+              7
+            ]
+          ]
+        }
+      }
+    },
     {
       "id": "landuse_areas",
       "type": "fill",

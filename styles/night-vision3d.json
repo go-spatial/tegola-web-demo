@@ -215,6 +215,39 @@
         "fill-opacity": 1
       }
     },
+	{
+      "id": "pier_line",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "other_lines",
+      "minzoom": 12,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(51, 51, 51, 0.6)",
+        "line-width": {
+          "stops": [
+            [
+              12,
+              6
+            ],
+            [
+              18,
+              12
+            ]
+          ]
+        }
+      }
+    },
     {
       "id": "island",
       "type": "fill",

@@ -111,6 +111,39 @@
       }
     },
 	{
+      "id": "pier_line",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "other_lines",
+      "minzoom": 12,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "pier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(76, 176, 92, 1)",
+        "line-width": {
+          "stops": [
+            [
+              12,
+              2
+            ],
+            [
+              18,
+              7
+            ]
+          ]
+        }
+      }
+    },
+	{
       "id": "state_lines_10",
       "type": "line",
       "source": "osm",

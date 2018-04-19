@@ -171,10 +171,6 @@
               "rgba(107, 73, 38, 0.15)"
             ],
             [
-              "military",
-              "rgba(255, 255, 255, 0.35)"
-            ],
-            [
               "residential",
               "rgba(153, 195, 150, 0.2)"
             ],
@@ -210,6 +206,29 @@
         }
       }
     },
+	{
+      "id": "landuse_areas_military_overlay",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "landuse_areas",
+      "minzoom": 1,
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "military"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "rgba(178, 194, 157, 1)",
+		"fill-pattern": "military-fill2"
+      }
+    },
     {
       "id": "landuse_areas_lines",
       "type": "line",
@@ -243,10 +262,6 @@
             [
               "university",
               "rgba(105, 74, 35, 0.45)"
-            ],
-            [
-              "military",
-              "rgba(64, 63, 63, 1)"
             ]
           ]
         }

@@ -84,10 +84,6 @@
       "default": "transparent",
           "stops": [
             [
-              "military",
-              "rgba(255, 255, 255, 0.35)"
-            ],
-            [
               "farmland",
               "rgba(189, 130, 88, 0.13)"
             ],
@@ -294,6 +290,29 @@
       },
       "paint": {
         "fill-color": "rgba(100, 179, 100, 0.09)"
+      }
+    },
+	{
+      "id": "landuse_areas_military_overlay",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "landuse_areas",
+      "minzoom": 8,
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "military"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "rgba(178, 194, 157, 1)",
+		"fill-pattern": "military-fill3"
       }
     },
     {

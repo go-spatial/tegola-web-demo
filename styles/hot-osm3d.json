@@ -112,10 +112,6 @@
               "rgba(227, 233, 226, 1)"
             ],
             [
-              "military",
-              "rgba(230, 224, 212, 1)"
-            ],
-            [
               "salt_pond",
               "rgba(236, 240, 241, 1)"
             ],
@@ -283,11 +279,6 @@
           "type": "categorical",
       "default": "transparent",
           "stops": [
-            
-            [
-              "military",
-              "rgba(230, 224, 212, 1)"
-            ],
             [
               "park",
               "rgba(208, 220, 174, 1)"
@@ -334,6 +325,29 @@
             ]
           ]
         }
+      }
+    },
+	{
+      "id": "landuse_areas_military_overlay",
+      "type": "fill",
+      "source": "osm",
+      "source-layer": "landuse_areas",
+      "minzoom": 10,
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "military"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "rgba(178, 194, 157, 1)",
+		"fill-pattern": "military-fill"
       }
     },
     {

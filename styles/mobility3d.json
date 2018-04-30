@@ -1538,13 +1538,46 @@
         "text-halo-width": 0.5
       }
     },
-    {
-      "id": "label_motorway_shield",
-      "type": "symbol",
-      "source": "osm",
-      "source-layer": "transport_lines",
-	  "minzoom": 6,
-      "maxzoom": 24,
+   {
+      "minzoom": 7,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              7,
+              8
+            ],
+            [
+              14,
+              9
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 500,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref1}"
+      },
+      "maxzoom": 14,
       "filter": [
         "all",
         [
@@ -1554,22 +1587,24 @@
         ],
         [
           "!=",
-          "ref",
+          "ref1",
           ""
         ]
       ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shieldslowzoom",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
       "layout": {
-        "text-field": "{ref}",
-        "text-font": [
-          "Miriam Libre Regular"
-        ],
-        "symbol-placement": "line",
+        "text-line-height": 1.2,
         "text-size": {
           "stops": [
-		    [
-			  6,
-			  9
-			],
             [
               14,
               9
@@ -1580,33 +1615,487 @@
             ]
           ]
         },
-        "icon-allow-overlap": false,
-        "icon-optional": true,
-        "text-line-height": 1.2,
-        "visibility": "visible",
-        "text-ignore-placement": false,
-        "icon-image": "rectangle-6",
-        "text-rotation-alignment": "viewport",
-        "icon-rotation-alignment": "viewport",
-        "icon-size": 1,
         "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
         "icon-text-fit-padding": [
           0,
           10,
           0,
           10
         ],
-        "text-max-width": 1,
-        "icon-rotate": 0
+        "text-ignore-placement": false,
+        "symbol-spacing": 300,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref1}"
       },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref1",
+          ""
+        ],
+        [
+          "==",
+          "ref2",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields_only1",
       "paint": {
-        "text-color": "#333",
-        "icon-color": "rgba(158, 22, 22, 1)",
-        "icon-halo-color": "rgba(199, 63, 63, 1)",
-        "icon-opacity": 1,
-        "text-translate-anchor": "viewport",
-        "icon-translate-anchor": "viewport"
-      }
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 100,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref1}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref1",
+          ""
+        ],
+        [
+          "!=",
+          "ref2",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields1",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 200,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref2}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref2",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields2",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 300,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref3}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref3",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields3",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 400,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref4}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref4",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields4",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 500,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref5}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref5",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields5",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 600,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref6}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref6",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields6",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
+    },
+    {
+      "minzoom": 14,
+      "layout": {
+        "text-line-height": 1.2,
+        "text-size": {
+          "stops": [
+            [
+              14,
+              9
+            ],
+            [
+              15,
+              10
+            ]
+          ]
+        },
+        "icon-text-fit": "width",
+        "icon-image": "rectangle-6",
+        "icon-rotation-alignment": "viewport",
+        "icon-text-fit-padding": [
+          0,
+          10,
+          0,
+          10
+        ],
+        "text-ignore-placement": false,
+        "symbol-spacing": 700,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "icon-allow-overlap": false,
+        "symbol-placement": "line",
+        "visibility": "visible",
+        "icon-optional": false,
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-pitch-alignment": "viewport",
+        "text-field": "{ref7}"
+      },
+      "maxzoom": 24,
+      "filter": [
+        "all",
+        [
+          "==",
+          "type",
+          "motorway"
+        ],
+        [
+          "!=",
+          "ref7",
+          ""
+        ]
+      ],
+      "type": "symbol",
+      "source": "osm",
+      "id": "roads_14_shields7",
+      "paint": {
+        "text-color": "#333"
+      },
+      "source-layer": "transport_lines"
     }
   ],
   "created": "2017-01-04T21:12:33.904Z",

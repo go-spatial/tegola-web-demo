@@ -560,7 +560,8 @@
           "footway",
           "cycleway",
           "path",
-          "service"
+          "service",
+		  "pedestrian"
         ]
       ],
       "layout": {
@@ -640,7 +641,8 @@
         [
           "in",
           "type",
-          "residential"
+          "residential",
+		  "unclassified"
         ]
       ],
       "layout": {
@@ -839,6 +841,39 @@
             [
               20,
               11
+            ]
+          ]
+        }
+      }
+    },
+	{
+      "id": "roads_subways",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 14,
+      "filter": [
+        "all",
+        [
+          "in",
+          "type",
+          "subway"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(153, 153, 153, 1)",
+        "line-width": {
+          "stops": [
+            [
+              14,
+              0.7
+            ],
+            [
+              18,
+              2
             ]
           ]
         }

@@ -638,7 +638,9 @@
       "minzoom": 10,
       "maxzoom": 24,
       "filter": [
-        "all"
+        "!=",
+        "type",
+        "subway"
       ],
       "layout": {
         "text-field": "{name}",

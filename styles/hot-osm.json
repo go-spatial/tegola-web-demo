@@ -1851,6 +1851,39 @@
         }
       }
     },
+	{
+      "id": "roads_subways",
+      "type": "line",
+      "source": "osm",
+      "source-layer": "transport_lines",
+      "minzoom": 14,
+      "filter": [
+        "all",
+        [
+          "in",
+          "type",
+          "subway"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "rgba(153, 153, 153, 1)",
+        "line-width": {
+          "stops": [
+            [
+              14,
+              0.7
+            ],
+            [
+              18,
+              2
+            ]
+          ]
+        }
+      }
+    },
     {
       "id": "roads_motorwaytunnel",
       "type": "line",
@@ -2678,7 +2711,9 @@
       "source-layer": "transport_lines",
       "minzoom": 14,
       "filter": [
-        "all"
+        "!=",
+        "type",
+        "subway"
       ],
       "layout": {
         "text-field": "{name}",

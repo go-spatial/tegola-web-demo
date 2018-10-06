@@ -3811,7 +3811,7 @@
   "sources": {
     "osm": {
       "type": "vector",
-      "url": "https://osm.tegola.io/capabilities/osm.json"
+      "url": "https://osm-lambda.tegola.io/v1/capabilities/osm.json"
     }
   },
   "id": "2809a5c6-5ed6-4cce-b269-0ae6d3d8e012"

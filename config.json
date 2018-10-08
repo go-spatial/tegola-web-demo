@@ -17,6 +17,13 @@
     	"olStyle":"styles/hot-osm.json",
     	"host":"http://demo.tegola.io"
     },{
+        "key":"go-spatial",
+        "label":"Go Spatial",
+        "tileSrc":"images/go-spatial.png",
+        "mapboxStyle":"styles/go-spatial.json",
+        "olStyle":"styles/go-spatial.json",
+        "host":"http://demo.tegola.io"
+    },{
     	"key":"camo",
     	"label":"Camo",
     	"tileSrc":"images/camo.png",

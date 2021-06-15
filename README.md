@@ -47,7 +47,7 @@ The following is an example JSON configuration:
         "label":"EC2",
         "sources":{
             "osm":{
-                "url":"https://osm-lambda.tegola.io/v1/capabilities/osm.json",
+                "url":"https://tegola-osm-demo.go-spatial.org/v1/capabilities/osm.json",
                 "type":"vector"
             },
             "satellite":{
